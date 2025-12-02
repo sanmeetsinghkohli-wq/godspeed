@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Singhulars Got Talent - GODSPEED (Daily Bloom Theme)</title>
+
+  <!-- Tailwind (kept for utility classes already used) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <!-- Stripe.js (stubbed client) -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* Google fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;800&family=Cinzel:wght@700&display=swap');
+
+    /* ================= DAILY BLOOM COLOR PALETTE =================
+       #FFFFFF (white)
+       #D174D2 (pink-lilac)
+       #E0563F (coral orange)
+       #3F567F (muted blue)
+       #412653 (deep purple)
+    ================================================================== */
+
+    :root{
+      --white: #FFFFFF;
+      --pink: #D174D2;
+      --orange: #E0563F;
+      --blue: #3F567F;
+      --deep: #412653;
+      --bg-1: #0f0c10; /* dark base */
+      --glass-bg: rgba(255,255,255,0.03);
+      --muted-text: rgba(255,255,255,0.75);
+      --input-bg: #ffffff;
+      --warning: #DC2626;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(209,116,210,0.14), transparent 12%),
+                  radial-gradient(1000px 600px at 90% 80%, rgba(224,86,63,0.10), transparent 10%),
+                  linear-gradient(180deg, #0b0a0e 0%, #100a18 60%, #12061a 100%);
+      color: var(--white);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      letter-spacing:0.2px;
+      overflow-y:auto;
+    }
+
+    /* subtle ambient panel */
+    .bg-hero {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(120deg, rgba(65,38,83,0.35) 0%, rgba(63,86,127,0.15) 40%, rgba(224,86,63,0.05) 70%, rgba(209,116,210,0.04) 100% );
+      filter: blur(36px) saturate(1.05);
+      transform: scale(1.02);
+    }
+
+    /* decorative floating shapes */
+    .float-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.08;
+      pointer-events: none;
+      filter: blur(20px);
+      z-index:-1;
+    }
+
+    /* header / nav */
+    header {
+      position: sticky;
+      top: 12px;
+      margin: 18px;
+      z-index: 50;
+      backdrop-filter: blur(8px) saturate(120%);
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      box-shadow: 0 8px 40px rgba(2,2,6,0.6);
+    }
+
+    .logo {
+      width:56px;height:56px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,var(--pink),var(--orange));
+      box-shadow: 0 6px 18px rgba(224,86,63,0.12);
+      font-weight:700;color:var(--white);
+      font-family:'Cinzel',serif;
+      letter-spacing:1px;
+    }
+
+    .brand {
+      display:flex;flex-direction:column;
+    }
+
+    .brand h1 {font-family:'Cinzel',serif; font-size:18px; margin:0; color:var(--white); letter-spacing:2px}
+    .brand p {font-size:11px; color:var(--muted-text); margin-top:2px}
+
+    /* auth buttons */
+    .auth-actions {margin-left:auto; display:flex; gap:10px; align-items:center}
+    .btn {
+      padding:10px 16px; border-radius:12px; cursor:pointer; font-weight:600; border: none;
+      transition: all .18s ease; font-size:14px;
+    }
+    .btn-ghost { background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent); color:var(--white); border:1px solid rgba(255,255,255,0.04) }
+    .btn-primary { background: linear-gradient(90deg,var(--pink),var(--orange)); color:var(--white); box-shadow: 0 8px 30px rgba(209,116,210,0.14) }
+    .btn-danger { background: var(--warning); color: white; border-radius:12px; padding:8px 12px }
+
+    /* main container */
+    .container { max-width:1200px; margin: 28px auto; padding: 18px; }
+
+    /* hero card */
+    .hero {
+      display:grid;
+      grid-template-columns: 1fr 460px;
+      gap:28px;
+      align-items:stretch;
+      margin-bottom:28px;
+    }
+
+    .hero-left {
+      padding:36px;
+      border-radius:20px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 20px 60px rgba(2,2,6,0.6);
+    }
+
+    .hero-title {
+      font-family:'Playfair Display', serif;
+      font-size:86px; line-height:0.9; margin-bottom:8px;
+      font-weight:800;
+      color:var(--white);
+      text-shadow: 0 10px 30px rgba(63,86,127,0.14);
+    }
+
+    .hero-sub {
+      font-size:18px; color: rgba(255,255,255,0.85); margin-bottom:18px; max-width:680px;
+    }
+
+    .hero-cta-row {
+      display:flex; gap:14px; align-items:center; margin-top:18px;
+    }
+
+    .circle-nav {
+      width:56px;height:56px;border-radius:999px;border:2px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
+      color:var(--muted-text); cursor:pointer;
+      transition: all .18s;
+      background: transparent;
+    }
+    .circle-nav:hover { transform: scale(1.06); border-color: rgba(209,116,210,0.25) }
+
+    /* hero right (image / information) */
+    .hero-right {
+      padding:28px;
+      border-radius:20px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:14px;
+      background: linear-gradient(180deg, rgba(65,38,83,0.34), rgba(63,86,127,0.12));
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .hero-right .meta-title { font-size:40px; font-weight:800; color:var(--white); display:flex; align-items:center; gap:12px; justify-content:center; }
+    .hero-right p { color: rgba(255,255,255,0.85); line-height:1.5; font-size:14px; }
+
+    /* sponsors */
+    .sponsors {
+      margin: 38px 0 18px 0;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+      gap:14px;
+    }
+    .sponsor-card {
+      background: var(--white);
+      color: var(--deep);
+      padding:18px;
+      border-radius:14px;
+      text-align:center;
+      font-weight:700;
+      box-shadow: 0 10px 30px rgba(2,2,6,0.45);
+    }
+
+    /* application card and form */
+    .application {
+      margin-top:8px;
+    }
+
+    .form-card {
+      padding:24px;
+      border-radius:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 12px 36px rgba(2,2,6,0.6);
+    }
+
+    label { display:block; color: rgba(255,255,255,0.9); margin-bottom:6px; font-weight:600 }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea {
+      width:100%; padding:14px; border-radius:12px; border:1px solid rgba(0,0,0,0.06);
+      background: var(--input-bg); color:#0b0b0b; font-size:15px;
+    }
+
+    textarea { min-height:140px; resize:vertical }
+
+    .file-input { display:block; }
+
+    /* payment badge */
+    .payment-badge {
+      padding:8px 12px; border-radius:20px; background: linear-gradient(90deg,var(--blue),var(--deep)); color:var(--white); font-weight:700;
+    }
+
+    /* grid of cards for stats */
+    .stats-grid {
+      display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin: 20px 0;
+    }
+    .stat {
+      padding:16px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .stat .num { font-size:26px; font-weight:800; color:var(--pink) }
+
+    /* table for admin */
+    .table-wrap { overflow:auto; border-radius:12px; margin-top:12px; }
+    table { width:100%; border-collapse:collapse; min-width:900px }
+    th, td { padding:12px 14px; text-align:left; font-size:14px; color:var(--muted-text) }
+    thead th { background: linear-gradient(90deg,var(--pink),var(--orange)); color:var(--white); font-weight:700 }
+    tbody tr { border-bottom:1px solid rgba(255,255,255,0.03) }
+    .status-pending { background: linear-gradient(90deg,var(--pink),var(--orange)); color:var(--white); padding:8px 12px; border-radius:999px; font-weight:700 }
+    .status-approved { background: linear-gradient(90deg,var(--blue),var(--deep)); color:var(--white); padding:8px 12px; border-radius:999px; font-weight:700 }
+    .status-rejected { background: var(--warning); color:#fff; padding:8px 12px; border-radius:999px; font-weight:700 }
+
+    /* modal basics */
+    .modal { display:none; position:fixed; inset:0; align-items:center; justify-content:center; z-index:9999; background: rgba(2,2,6,0.6); }
+    .modal.active { display:flex; }
+    .modal-card { width:100%; max-width:720px; border-radius:12px; padding:22px; background: linear-gradient(180deg,rgba(255,255,255,0.98),#fff); color:#0b0b0b }
+
+    /* small screens adjustments */
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-title { font-size:44px }
+      .hero-right { order: -1 }
+      header { top:0; margin:10px }
+      .container { padding: 12px }
+      .brand h1 { font-size:16px }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-hero"></div>
+
+  <!-- decorative floats -->
+  <div class="float-shape" style="width:420px;height:420px;left:-120px;top:60px;background:linear-gradient(90deg,var(--pink),var(--orange));"></div>
+  <div class="float-shape" style="width:320px;height:320px;right:-90px;bottom:40px;background:linear-gradient(90deg,var(--blue),var(--deep));"></div>
+
+  <!-- header -->
+  <header class="container">
+    <div class="card" style="padding:12px 18px;">
+      <div class="logo">GS</div>
+      <div class="brand">
+        <h1>GODSPEED</h1>
+        <p style="color:var(--muted-text)">Singhulars Got Talent</p>
+      </div>
+
+      <div class="auth-actions">
+        <button id="authButton" class="btn btn-ghost" onclick="handleAuthButton()">Sign In</button>
+        <button onclick="showAdminLogin()" class="btn btn-ghost">Admin</button>
+        <button class="btn btn-primary" onclick="handleApplyNow()">Apply Now</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- hero -->
+    <section class="hero">
+      <div class="hero-left card" style="min-height:420px;">
+        <div>
+          <div class="hero-title">Daily<br>Bloom</div>
+          <p class="hero-sub">Flowers are inspiration of artists — we are here to create your future by following their wisdom. Showcase your talent and be discovered.</p>
+
+          <div class="hero-cta-row">
+            <button class="circle-nav" title="previous">◀</button>
+            <button class="circle-nav" title="next">▶</button>
+
+            <div style="margin-left:18px;">
+              <button class="btn btn-primary" onclick="handleApplyNow()">🎯 Apply Now</button>
+              <div style="margin-top:8px;color:var(--muted-text)">Registration Fee: <strong style="color:var(--pink)">AED 55</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- lower image peek -->
+        <div style="position:absolute;right:20px;bottom:10px;opacity:0.9">
+          <!-- optionally place a small decorative image or badge -->
+          <div style="width:160px;height:100px;background:linear-gradient(90deg,var(--pink),var(--orange));border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:800">02</div>
+        </div>
+      </div>
+
+      <aside class="hero-right card">
+        <div style="display:flex;align-items:center;justify-content:center;">
+          <div class="hero-right-image" style="width:100%;max-width:380px;border-radius:12px;overflow:hidden;box-shadow: 0 10px 30px rgba(2,2,6,0.5);">
+            <img src="https://images.unsplash.com/photo-1529101091764-c3526daf38fe?q=80&w=1200&auto=format&fit=crop" alt="hero" style="width:100%;height:240px;object-fit:cover;display:block">
+          </div>
+        </div>
+
+        <div style="text-align:center">
+          <div class="meta-title"><span style="display:inline-block;width:64px;height:64px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center">02</span></div>
+          <p style="margin-top:10px; color:var(--muted-text)">Showcase your voice, movement or unique craft. All ages and talents welcome. Submit a short performance video or audio and stand a chance to be featured and win prizes.</p>
+        </div>
+      </aside>
+    </section>
+
+    <!-- sponsors -->
+    <section class="sponsors">
+      <div class="sponsor-card">PLATINUM</div>
+      <div class="sponsor-card">GOLD</div>
+      <div class="sponsor-card">SILVER</div>
+      <div class="sponsor-card">BRONZE</div>
+    </section>
+
+    <!-- main application + stats -->
+    <section style="display:grid;grid-template-columns: 1fr 420px;gap:22px;align-items:start;">
+      <!-- left: application card -->
+      <div class="form-card application">
+        <h3 style="font-size:22px;margin-bottom:8px;color:var(--deep);font-weight:800">Application Form</h3>
+        <p style="color:var(--muted-text);margin-bottom:14px">Fill your details to participate in the talent showcase. Payment will be processed before final submission.</p>
+
+        <form id="talentForm" class="space-y-4" onsubmit="handleFormSubmit(event)">
+          <div>
+            <label for="fullName">Full Name *</label>
+            <input id="fullName" type="text" required placeholder="Your full name">
+          </div>
+
+          <div>
+            <label for="email">Email Address *</label>
+            <input id="email" type="email" required placeholder="you@example.com" readonly>
+          </div>
+
+          <div>
+            <label for="mobile">Mobile Number *</label>
+            <input id="mobile" type="tel" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+          </div>
+
+          <div>
+            <label for="dateOfBirth">Date of Birth *</label>
+            <input id="dateOfBirth" type="date" onchange="calculateAge()" required>
+            <div id="ageDisplay" style="margin-top:8px;"></div>
+          </div>
+
+          <div>
+            <label for="talentDescription">Tell us about your talent *</label>
+            <textarea id="talentDescription" maxlength="7000" placeholder="Describe your talent..."></textarea>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;color:var(--muted-text)">
+              <small>Character count: <span id="charCount">0</span> / 7000</small>
+            </div>
+          </div>
+
+          <div>
+            <label for="fileUpload">Upload Performance File (Max 50MB) *</label>
+            <input id="fileUpload" class="file-input" type="file" accept=".mp4,image/*,.pdf,.mp3" required>
+            <div id="fileSize" style="margin-top:6px;color:var(--muted-text)"></div>
+          </div>
+
+          <div style="border-radius:12px;padding:12px;background:linear-gradient(90deg, rgba(209,116,210,0.05), rgba(224,86,63,0.03));border:1px solid rgba(255,255,255,0.03);">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:800;color:var(--deep);font-size:18px">AED 55</div>
+                <div style="color:var(--muted-text);font-size:13px">One-time Registration Fee</div>
+              </div>
+              <div class="payment-badge">Secure Payment</div>
+            </div>
+            <small style="display:block;margin-top:8px;color:var(--muted-text)">Powered by Stripe. Non-refundable fee.</small>
+          </div>
+
+          <div style="display:flex;gap:12px">
+            <button id="submitBtn" class="btn btn-primary" type="submit">💳 PAY AED 55 & SUBMIT</button>
+            <button type="button" class="btn btn-ghost" onclick="hideApplicationForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- right: stats & quick info -->
+      <aside style="position:relative;">
+        <div class="card" style="flex-direction:column;gap:10px;padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:14px;color:var(--muted-text)">Total Applications</div>
+              <div id="totalApps" style="font-size:26px;font-weight:800;color:var(--pink)">0</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:14px;color:var(--muted-text)">Revenue</div>
+              <div id="totalRevenue" style="font-size:20px;font-weight:800;color:var(--orange)">AED 0</div>
+            </div>
+          </div>
+
+          <div class="stats-grid" style="margin-top:12px;">
+            <div class="stat">
+              <div style="color:var(--muted-text)">Junior</div>
+              <div class="num" id="juniorCount">0</div>
+              <div style="color:var(--muted-text);font-size:12px">5-10 years</div>
+            </div>
+            <div class="stat">
+              <div style="color:var(--muted-text)">Teenager</div>
+              <div class="num" id="teenagerCount">0</div>
+              <div style="color:var(--muted-text);font-size:12px">11-19 years</div>
+            </div>
+            <div class="stat">
+              <div style="color:var(--muted-text)">Adult</div>
+              <div class="num" id="elderCount">0</div>
+              <div style="color:var(--muted-text);font-size:12px">20-35 years</div>
+            </div>
+            <div class="stat">
+              <div style="color:var(--muted-text)">Senior</div>
+              <div class="num" id="seniorCount">0</div>
+              <div style="color:var(--muted-text);font-size:12px">36+ years</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- admin table preview -->
+        <div class="card" style="margin-top:18px;padding:12px;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:800;color:var(--deep)">Applications</div>
+            <div style="color:var(--muted-text)">Live</div>
+          </div>
+
+          <div class="table-wrap" style="margin-top:12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Email</th><th>Mobile</th><th>Age</th><th>Payment</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="applicationsBody">
+                <tr><td colspan="6" style="text-align:center;color:var(--muted-text)">No applications yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </aside>
+    </section>
+  </main>
+
+  <!-- ADMIN MODAL -->
+  <div id="adminPasswordModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <h3 style="font-size:20px;margin-bottom:8px;color:var(--deep);font-weight:800">Admin Login</h3>
+      <p style="color:var(--muted-text);margin-bottom:12px">Enter admin password to view dashboard (demo default: admin123)</p>
+      <input id="adminPassword" type="password" placeholder="Admin password" style="padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);width:100%;margin-bottom:12px">
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="verifyAdminPassword()">Login</button>
+        <button class="btn btn-ghost" onclick="closeAdminLogin()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div id="successModal" class="modal" aria-hidden="true">
+    <div class="modal-card" style="max-width:520px;">
+      <h3 style="font-size:22px;color:var(--deep);font-weight:800">Registration Successful</h3>
+      <p style="color:var(--muted-text)">Thank you for registering. We will notify you via email.</p>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="generateReceipt()">Download Receipt</button>
+        <button class="btn btn-ghost" onclick="closeSuccessModal()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILE VIEWER MODAL -->
+  <div id="fileViewerModal" class="modal" aria-hidden="true">
+    <div class="modal-card" style="max-width:900px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h4 style="font-weight:800;color:var(--deep)">File Preview</h4>
+        <button class="btn btn-danger" onclick="closeFileViewer()">Close</button>
+      </div>
+      <div id="fileViewerContent" style="min-height:320px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;background:var(--glass-bg)"></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="downloadFile()">⬇️ Download</button>
+        <button class="btn btn-ghost" onclick="closeFileViewer()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS (full app logic adapted from your original) -->
+  <script>
+    // -----------------------------
+    // CONFIG
+    // -----------------------------
+    const GOOGLE_CLIENT_ID = '510466997628-85povrl38c2ccinvgb7op6993q3514s3.apps.googleusercontent.com';
+    const EMAILJS_PUBLIC_KEY = 'YZpoRY4fYkni2gA6H';
+    const EMAILJS_SERVICE_ID = 'service_gjyxfni';
+    const TEMPLATE_APPROVED = 'template_79rj8l7';
+    const TEMPLATE_REJECTED = 'template_5z2riwt';
+
+    const STRIPE_PUBLISHABLE_KEY = 'pk_test_51QOz2oCvpkJKWzh6fvb6ZfJdKUjB9J6OEYY0HAbLQHqFcGo4KhNz2DeMvzEA6bqMXEFHlcjXO2NiGi2TFmBGjZd400Q2Oq7ZC8';
+    const REGISTRATION_FEE_AED = 55;
+    const CURRENCY = 'AED';
+
+    const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+    // initialize emailjs
+    (function(){ if(window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY); })();
+    // stripe instance (not used for real payment in demo)
+    let stripe = null;
+    if(window.Stripe) { stripe = Stripe(STRIPE_PUBLISHABLE_KEY); }
+
+    // -----------------------------
+    // In-memory stores
+    // -----------------------------
+    let currentUser = null;
+    let currentRole = null;
+    let pendingApplication = null;
+
+    const sessionData = { applications: [], users: [] };
+
+    // -----------------------------
+    // Helpers - age & categories
+    // -----------------------------
+    function getAgeCategory(age) {
+      if (age >= 5 && age <= 10) return 'Junior';
+      if (age >= 11 && age <= 19) return 'Teenager';
+      if (age >= 20 && age <= 35) return 'Adult';
+      if (age >= 36) return 'Senior';
+      return 'Invalid';
+    }
+
+    function calculateAge() {
+      const dobInput = document.getElementById('dateOfBirth');
+      const ageDisplay = document.getElementById('ageDisplay');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!dobInput.value) { ageDisplay.innerHTML=''; return; }
+
+      const dob = new Date(dobInput.value);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+      const category = getAgeCategory(age);
+      if (age < 5) {
+        ageDisplay.innerHTML = `<div style="padding:8px;border-radius:10px;background:var(--warning);color:#fff">Age: ${age} years — Not eligible (min 5)</div>`;
+        submitBtn.disabled = true;
+      } else {
+        ageDisplay.innerHTML = `<div style="padding:8px;border-radius:10px;background:linear-gradient(90deg,var(--pink),var(--orange));color:#fff">Age: ${age} years — ${category}</div>`;
+        submitBtn.disabled = false;
+      }
+      return { age, category };
+    }
+
+    // -----------------------------
+    // Google Sign-In
+    // -----------------------------
+    window.onload = function() {
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleSignIn,
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+
+        // render a small button inside the login modal container if present
+        const gBtnContainer = document.getElementById("googleSignInButton");
+        if (gBtnContainer) {
+          google.accounts.id.renderButton(gBtnContainer, {
+            theme: "outline",
+            size: "large",
+            width: 320,
+            text: "continue_with",
+            shape: "rectangular"
+          });
+        }
+      }
+
+      // character count
+      const ta = document.getElementById('talentDescription');
+      const cc = document.getElementById('charCount');
+      if (ta) ta.addEventListener('input', () => { cc.textContent = ta.value.length; });
+
+      // file size preview
+      const fileInput = document.getElementById('fileUpload');
+      if (fileInput) fileInput.addEventListener('change', function(){
+        const f = this.files[0];
+        const fileSizeEl = document.getElementById('fileSize');
+        if (!f) { fileSizeEl.textContent=''; return; }
+        const mb = (f.size/(1024*1024)).toFixed(2);
+        fileSizeEl.textContent = `File size: ${mb} MB`;
+        if (f.size > 50*1024*1024) { alert('File exceeds 50MB limit'); this.value=''; fileSizeEl.textContent=''; }
+      });
+
+      // form submit handler
+      const form = document.getElementById('talentForm');
+      if (form) form.addEventListener('submit', handleFormSubmit);
+    };
+
+    function handleGoogleSignIn(response) {
+      try {
+        const credential = parseJwt(response.credential);
+        if (!credential) { alert('Google login failed'); return; }
+
+        let localUser = sessionData.users.find(u => u.email === credential.email);
+        if (!localUser) {
+          localUser = {
+            id: Date.now(),
+            googleId: credential.sub,
+            name: credential.name,
+            email: credential.email,
+            photoURL: credential.picture,
+            hasApplied: false,
+            authProvider: 'google',
+            createdAt: new Date().toISOString()
+          };
+          sessionData.users.push(localUser);
+        }
+
+        currentUser = localUser;
+        currentRole = 'user';
+        updateAuthButton();
+        alert('Welcome, ' + credential.name);
+      } catch (e) {
+        console.error(e);
+        alert('Google sign-in error');
+      }
+    }
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g,'+').replace(/_/g,'/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c){
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // -----------------------------
+    // Auth UI
+    // -----------------------------
+    function updateAuthButton(){
+      const container = document.getElementById('authButton');
+      if (!container) return;
+      if (currentUser) {
+        container.textContent = 'Logout';
+        container.onclick = logout;
+      } else {
+        container.textContent = 'Sign In';
+        container.onclick = handleAuthButton;
+      }
+    }
+
+    function handleAuthButton(){
+      // simple behaviour: if not logged -> show google sign-in prompt or login modal.
+      if (!currentUser) {
+        alert('Please use Google sign-in or register in the form. (Demo uses in-memory users.)');
+        // show login form: pre-populate modal etc. For brevity, open user login page is skipped.
+      } else {
+        logout();
+      }
+    }
+
+    function logout(){
+      if (currentUser && currentUser.authProvider === 'google' && window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
+      currentUser = null;
+      currentRole = null;
+      updateAuthButton();
+      alert('Logged out');
+    }
+
+    // -----------------------------
+    // Navigation & application flow
+    // -----------------------------
+    function handleApplyNow() {
+      if (!currentUser) {
+        alert('Please sign in first (demo). You will be asked to fill details.');
+        // For demo: allow filling form but require email field, we keep email readonly; show instructions
+        const e = prompt('Enter your email to sign-in for demo:');
+        if (!e) return;
+        let user = sessionData.users.find(u => u.email === e);
+        if (!user) {
+          user = { id: Date.now(), name: e.split('@')[0], email: e, authProvider: 'demo', hasApplied: false };
+          sessionData.users.push(user);
+        }
+        currentUser = user;
+        currentRole = 'user';
+        updateAuthButton();
+        document.getElementById('email').value = currentUser.email;
+        document.getElementById('fullName').value = currentUser.name;
+        window.scrollTo({top: document.getElementById('talentForm').offsetTop - 60, behavior: 'smooth'});
+        return;
+      }
+      // prefill
+      const emailEl = document.getElementById('email');
+      const nameEl = document.getElementById('fullName');
+      if (emailEl && currentUser) emailEl.value = currentUser.email || '';
+      if (nameEl && currentUser) nameEl.value = currentUser.name || '';
+      window.scrollTo({top: document.getElementById('talentForm').offsetTop - 60, behavior: 'smooth'});
+    }
+
+    function hideApplicationForm(){
+      document.getElementById('talentForm').reset();
+      document.getElementById('charCount').textContent = 0;
+      document.getElementById('fileSize').textContent = '';
+      document.getElementById('ageDisplay').innerHTML = '';
+      alert('Form reset');
+    }
+
+    // -----------------------------
+    // Form submission & payment (demo)
+    // -----------------------------
+    function processStripePayment() {
+      // Demo: fake payment confirmation
+      return new Promise((resolve, reject) => {
+        const ok = confirm(`Complete demo payment of AED ${REGISTRATION_FEE_AED}? Click OK to simulate success.`);
+        if (!ok) return reject(new Error('Payment cancelled'));
+        // fake delay
+        setTimeout(() => {
+          const paymentId = 'pi_' + Math.random().toString(36).substr(2, 20);
+          resolve(paymentId);
+        }, 900);
+      });
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      if (!currentUser) { alert('Please sign in (demo) before submitting'); return; }
+
+      const ageData = calculateAge();
+      if (ageData && ageData.age < 5) { alert('Minimum age is 5'); return; }
+
+      // prevent multiple apps per email (demo)
+      if (sessionData.applications.some(a => a.userEmail === currentUser.email)) {
+        alert('You have already applied');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Processing...';
+
+      processStripePayment()
+        .then(paymentId => {
+          // read file
+          const fileInput = document.getElementById('fileUpload');
+          const file = fileInput.files[0];
+          if (!file) {
+            alert('Please upload a file');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            const formData = {
+              id: Date.now(),
+              userId: currentUser.id,
+              userEmail: currentUser.email,
+              userName: currentUser.name,
+              name: document.getElementById('fullName').value,
+              email: document.getElementById('email').value,
+              mobile: document.getElementById('mobile').value,
+              dob: document.getElementById('dateOfBirth').value,
+              age: ageData.age,
+              ageCategory: ageData.category,
+              talent: document.getElementById('talentDescription').value,
+              fileName: file.name,
+              fileData: ev.target.result,
+              fileType: file.type,
+              status: 'Pending',
+              paymentId,
+              paymentAmount: REGISTRATION_FEE_AED,
+              paymentCurrency: CURRENCY,
+              paymentStatus: 'Paid',
+              submittedAt: new Date().toLocaleString()
+            };
+
+            // Save to Google Sheets (best-effort)
+            saveToGoogleSheets(formData).catch(()=>{ /* ignore sheet errors in demo */ });
+
+            sessionData.applications.push(formData);
+            pendingApplication = formData;
+
+            // update UI
+            refreshApplicationsTable();
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            openSuccessModal(paymentId, formData.email);
+          };
+          reader.readAsDataURL(file);
+        })
+        .catch(err => {
+          alert('Payment was cancelled or failed.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        });
+    }
+
+    // -----------------------------
+    // Google Sheets (demo - no-cors)
+    // -----------------------------
+    async function saveToGoogleSheets(data) {
+      // In many static setups you cannot post to Apps Script due to CORS. This function attempts to POST but won't block app.
+      try {
+        await fetch(GOOGLE_SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ action: 'saveApplication', data })
+        });
+        console.log('Attempted to save to Google Sheets');
+      } catch (err) {
+        console.warn('Google Sheets save failed (demo):', err);
+        // for demo we already saved to sessionData
+      }
+    }
+
+    // -----------------------------
+    // UI helpers: refresh tables, modals
+    // -----------------------------
+    function refreshApplicationsTable() {
+      const tbody = document.getElementById('applicationsBody');
+      if (!tbody) return;
+      if (sessionData.applications.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-text)">No applications yet</td></tr>';
+        return;
+      }
+
+      const rows = sessionData.applications.map(app => {
+        const statusClass = app.status === 'Approved' ? 'status-approved' : (app.status === 'Rejected' ? 'status-rejected' : 'status-pending');
+        const shortPayment = app.paymentId ? (app.paymentId.substring(0,12) + '...') : 'N/A';
+        return `
+          <tr>
+            <td style="color:var(--white)">${app.name}</td>
+            <td>${app.email}</td>
+            <td>${app.mobile || '-'}</td>
+            <td>${app.age || '-'}</td>
+            <td>AED ${app.paymentAmount || REGISTRATION_FEE_AED}</td>
+            <td><span class="${statusClass}">${app.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+      tbody.innerHTML = rows;
+
+      // update stats
+      document.getElementById('totalApps').textContent = sessionData.applications.length;
+      const revenue = sessionData.applications.reduce((s,a)=> s + (a.paymentAmount||0), 0);
+      document.getElementById('totalRevenue').textContent = `AED ${revenue}`;
+
+      const stats = { Junior:0, Teenager:0, Adult:0, Senior:0 };
+      sessionData.applications.forEach(a => { if (a.ageCategory && stats[a.ageCategory] !== undefined) stats[a.ageCategory]++; });
+      document.getElementById('juniorCount').textContent = stats.Junior;
+      document.getElementById('teenagerCount').textContent = stats.Teenager;
+      document.getElementById('elderCount').textContent = stats.Adult;
+      document.getElementById('seniorCount').textContent = stats.Senior;
+    }
+
+    // success modal
+    function openSuccessModal(paymentId, email) {
+      document.getElementById('successModal').classList.add('active');
+      // store info in modal if needed
+    }
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.remove('active');
+      // reset form
+      document.getElementById('talentForm').reset();
+      document.getElementById('charCount').textContent = 0;
+      document.getElementById('fileSize').textContent = '';
+      document.getElementById('ageDisplay').innerHTML = '';
+    }
+
+    // admin modal
+    function showAdminLogin(){ document.getElementById('adminPasswordModal').classList.add('active'); }
+    function closeAdminLogin(){ document.getElementById('adminPasswordModal').classList.remove('active'); document.getElementById('adminPassword').value=''; }
+
+    function verifyAdminPassword(){
+      const pw = document.getElementById('adminPassword').value;
+      if (pw === 'admin123') {
+        currentRole = 'admin';
+        currentUser = { id: 'admin', name: 'Admin', email:'admin@example.com' };
+        updateAuthButton();
+        closeAdminLogin();
+        // show admin dashboard (for demo we just alert and refresh)
+        alert('Admin access granted (demo). Table refreshed.');
+        refreshApplicationsTable();
+      } else {
+        alert('Invalid password');
+      }
+    }
+
+    // -----------------------------
+    // Approve / Reject (demo + email via EmailJS)
+    // -----------------------------
+    function approveApplication(id) {
+      const app = sessionData.applications.find(a => a.id === id);
+      if (!app) return;
+      app.status = 'Approved';
+      // send email using EmailJS
+      sendApprovalEmail(app).then(()=>{ alert('Approval email sent'); }).catch(()=>{ alert('Approval email could not be sent (demo)'); });
+      refreshApplicationsTable();
+    }
+
+    function rejectApplication(id) {
+      const app = sessionData.applications.find(a => a.id === id);
+      if (!app) return;
+      app.status = 'Rejected';
+      sendRejectionEmail(app).then(()=>{ alert('Rejection email sent'); }).catch(()=>{ alert('Rejection email could not be sent (demo)'); });
+      refreshApplicationsTable();
+    }
+
+    function sendApprovalEmail(applicationData) {
+      if (!applicationData.email || !window.emailjs) return Promise.reject('No email or EmailJS not initialized');
+      const templateParams = {
+        to_name: applicationData.name || 'Participant',
+        to_email: applicationData.email,
+        from_name: 'Godspeed Talent Team',
+        talent_type: (applicationData.talent||'Your talent').substring(0,100),
+        reply_to: 'singhularsgottalent@gmail.com'
+      };
+      return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_APPROVED, templateParams);
+    }
+
+    function sendRejectionEmail(applicationData) {
+      if (!applicationData.email || !window.emailjs) return Promise.reject('No email or EmailJS not initialized');
+      const templateParams = {
+        to_name: applicationData.name || 'Participant',
+        to_email: applicationData.email,
+        from_name: 'Godspeed Talent Team',
+        reply_to: 'singhularsgottalent@gmail.com'
+      };
+      return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_REJECTED, templateParams);
+    }
+
+    // -----------------------------
+    // File preview & download
+    // -----------------------------
+    let currentFileData = null;
+    let currentFileName = null;
+    function viewFile(id) {
+      const app = sessionData.applications.find(a => a.id === id);
+      if (!app || !app.fileData) return alert('No file');
+      currentFileData = app.fileData; currentFileName = app.fileName;
+      const content = document.getElementById('fileViewerContent');
+      if (app.fileType.startsWith('image/')) content.innerHTML = `<img src="${app.fileData}" style="max-width:100%;border-radius:8px">`;
+      else if (app.fileType.startsWith('video/')) content.innerHTML = `<video controls style="max-width:100%"><source src="${app.fileData}" type="${app.fileType}">Your browser does not support</video>`;
+      else if (app.fileType === 'application/pdf') content.innerHTML = `<iframe src="${app.fileData}" style="width:100%;height:520px;border:0"></iframe>`;
+      else if (app.fileType.startsWith('audio/')) content.innerHTML = `<audio controls style="width:100%"><source src="${app.fileData}" type="${app.fileType}"></audio>`;
+      else content.innerHTML = `<div>${app.fileName}</div>`;
+      document.getElementById('fileViewerModal').classList.add('active');
+    }
+    function closeFileViewer(){ document.getElementById('fileViewerModal').classList.remove('active'); }
+    function downloadFile(){
+      if (!currentFileData || !currentFileName) return;
+      const a = document.createElement('a'); a.href = currentFileData; a.download = currentFileName; document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    // -----------------------------
+    // Receipt generation (jsPDF)
+    // -----------------------------
+    function generateReceipt(){
+      if (!pendingApplication) return alert('No recent application to generate receipt for');
+      const { jsPDF } = window.jspdf || {};
+      if (!jsPDF) { alert('jsPDF not available in this environment'); return; }
+      const doc = new jsPDF();
+      doc.setFontSize(20); doc.setTextColor(209,116,210); doc.text('GODSPEED', 105, 20, { align: 'center' });
+      doc.setFontSize(14); doc.setTextColor(0,0,0); doc.text('Singhulars Got Talent - Registration Receipt', 105, 30, { align: 'center' });
+      doc.setFontSize(11); doc.text(`Receipt Date: ${new Date().toLocaleDateString()}`, 20, 50);
+      doc.text(`Receipt ID: ${pendingApplication.id}`, 20, 60);
+      doc.setDrawColor(224,86,63); doc.line(20,70,190,70);
+      doc.setFontSize(12); doc.setTextColor(63,86,127); doc.text('Registration Details:', 20, 85);
+      doc.setFontSize(10); doc.setTextColor(0,0,0);
+      doc.text(`Name: ${pendingApplication.name}`, 20, 100);
+      doc.text(`Email: ${pendingApplication.email}`, 20, 110);
+      doc.text(`Mobile: ${pendingApplication.mobile || ''}`, 20, 120);
+      doc.text(`Age: ${pendingApplication.age || ''}`, 20, 130);
+      doc.text(`DOB: ${pendingApplication.dob || ''}`, 20, 140);
+      doc.setFontSize(12); doc.setTextColor(63,86,127); doc.text('Payment Details:', 20, 160);
+      doc.setFontSize(10); doc.setTextColor(0,0,0);
+      doc.text(`Payment ID: ${pendingApplication.paymentId || ''}`, 20, 175);
+      doc.text(`Amount Paid: AED ${REGISTRATION_FEE_AED}`, 20, 185);
+      doc.setDrawColor(209,116,210); doc.line(20,210,190,210);
+      doc.setFontSize(10); doc.setTextColor(100,100,100);
+      doc.text('Thank you for registering! This is a computer generated receipt.', 105, 225, { align: 'center' });
+      doc.save(`SGT_Receipt_${pendingApplication.id}.pdf`);
+    }
+
+    // initialize visual state
+    refreshApplicationsTable();
+
+  </script>
+</body>
+</html>

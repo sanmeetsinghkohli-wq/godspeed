@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singhulars Got Talent - GODSPEED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- EmailJS SDK for Email Sending -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- ==================== STYLES ==================== -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        /* ✨ STYLISH CALLIGRAPHY FONTS ✨ */
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Allura&family=Dancing+Script:wght@400;500;600;700&family=Pacifico&family=Sacramento&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F9F6F1;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            color: #000000;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #F9F6F1 0%, #FFF8E7 50%, #F9F6F1 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #D4AF37;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ==================== 🎨 CALLIGRAPHY TITLE STYLES 🎨 ==================== */
+        .calligraphy-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 7rem;
+            font-weight: 400;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 25%, #F4D992 50%, #FFD700 75%, #D4AF37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.4))
+                    drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))
+                    drop-shadow(0 0 40px rgba(244, 217, 146, 0.2));
+            animation: shimmer 3s linear infinite, float-title 4s ease-in-out infinite;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            padding: 0 20px;
+        }
+
+        .calligraphy-title::before {
+            content: '✨';
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            animation: sparkle-left 2s ease-in-out infinite;
+        }
+
+        .calligraphy-title::after {
+            content: '✨';
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            animation: sparkle-right 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes float-title {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.02);
+            }
+        }
+
+        @keyframes sparkle-left {
+            0%, 100% { 
+                transform: translateY(-50%) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-50%) rotate(-20deg) scale(1.3);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes sparkle-right {
+            0%, 100% { 
+                transform: translateY(-50%) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-50%) rotate(20deg) scale(1.3);
+                opacity: 0.6;
+            }
+        }
+
+        /* Decorative underline for calligraphy title */
+        .title-decoration {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .title-decoration::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #D4AF37, #FFD700, #D4AF37, transparent);
+            border-radius: 2px;
+            animation: underline-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes underline-glow {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+                opacity: 1;
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+                opacity: 0.8;
+            }
+        }
+
+        /* Crown decoration above title */
+        .crown-decoration {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: -10px;
+            animation: crown-bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.4));
+        }
+
+        @keyframes crown-bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive adjustments for calligraphy */
+        @media (max-width: 1024px) {
+            .calligraphy-title {
+                font-size: 5rem;
+            }
+            .crown-decoration {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calligraphy-title {
+                font-size: 3.5rem;
+            }
+            .calligraphy-title::before,
+            .calligraphy-title::after {
+                font-size: 2rem;
+                left: -30px;
+                right: -30px;
+            }
+            .crown-decoration {
+                font-size: 2.5rem;
+            }
+            .title-decoration::after {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calligraphy-title {
+                font-size: 2.5rem;
+                letter-spacing: 1px;
+            }
+            .calligraphy-title::before,
+            .calligraphy-title::after {
+                font-size: 1.5rem;
+                left: -20px;
+                right: -20px;
+            }
+            .crown-decoration {
+                font-size: 2rem;
+            }
+            .title-decoration::after {
+                width: 150px;
+            }
+        }
+
+        /* ==================== END CALLIGRAPHY STYLES ==================== */
+
+        .golden-text {
+            color: #D4AF37;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
+        }
+
+        .golden-text-light {
+            color: #F4D992;
+            text-shadow: 0 1px 2px rgba(244, 217, 146, 0.3);
+        }
+
+        .golden-gradient {
+            color: #D4AF37;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+        }
+
+        .golden-btn {
+            background: linear-gradient(135deg, #B68A2C, #D4AF37);
+            color: #F9F6F1;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(182, 138, 44, 0.4);
+            cursor: pointer;
+            border: 2px solid #D4AF37;
+        }
+
+        .golden-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .golden-btn:hover:before {
+            left: 100%;
+        }
+
+        .golden-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(182, 138, 44, 0.5);
+        }
+
+        .golden-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid #D4AF37;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2),
+                        inset 0 0 20px rgba(244, 217, 146, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-glass:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
+        .sparkle {
+            position: relative;
+            animation: sparkleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkleGlow {
+            0%, 100% { 
+                filter: brightness(1) drop-shadow(0 0 5px #D4AF37);
+            }
+            50% { 
+                filter: brightness(1.2) drop-shadow(0 0 15px #D4AF37);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .social-btn {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .gradient-border {
+            position: relative;
+            border: 3px solid #D4AF37;
+            background: #FFFFFF;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { border-color: #D4AF37; }
+            50% { border-color: #F4D992; }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .talent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .talent-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            transition: all 0.3s;
+            border: 2px solid #D4AF37;
+        }
+
+        .talent-card:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .talent-card img {
+            transition: all 0.5s;
+        }
+
+        .talent-card:hover img {
+            transform: scale(1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F9F6F1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #D4AF37, #B68A2C);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #B68A2C, #D4AF37);
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            letter-spacing: 5px;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px #D4AF37,
+                         0 0 20px #D4AF37,
+                         0 0 30px #F4D992;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-black {
+            color: #000000;
+        }
+
+        input, textarea {
+            color: #000000;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #666666;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #D4AF37, #F4D992);
+            color: #000000;
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .status-pending {
+            background: #F4D992;
+            color: #000000;
+        }
+
+        .status-approved {
+            background: #4CAF50;
+            color: #FFFFFF;
+        }
+
+        .status-rejected {
+            background: #F44336;
+            color: #FFFFFF;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+
+        #googleSignInButton {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-animation"></div>
+    <div class="stars" id="stars"></div>
+
+    <div class="content-wrapper">
+        
+        <!-- ==================== PUBLIC EVENT PAGE (Default View) ==================== -->
+        <div id="publicEventPage">
+            <header class="card-glass border-b-2 p-5 sticky top-0 z-50" style="border-color: #D4AF37;">
+                <div class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center pulse" style="background: linear-gradient(135deg, #D4AF37, #B68A2C);">
+                            <svg class="w-6 h-6" fill="#F9F6F1" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold logo-text" style="color: #D4AF37;">GODSPEED</h1>
+                            <p class="text-xs text-black opacity-70">Singhulars Got Talent</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 items-center">
+                        <div id="authButtonContainer">
+                            <button id="authButton" onclick="handleAuthButton()" class="px-6 py-3 rounded-xl font-semibold transition-all shadow-lg golden-btn">
+                                Sign In
+                            </button>
+                        </div>
+                        <button onclick="showAdminLogin()" class="px-6 py-3 rounded-xl font-semibold transition-all border-2" style="background: #666666; color: #F9F6F1; border-color: #555555;">
+                            Admin
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container mx-auto p-6 max-w-7xl">
+                <div class="card-glass gradient-border rounded-3xl p-10 fade-in">
+                    <div class="text-center mb-8">
+                        <div class="title-decoration">
+                            <h2 class="calligraphy-title">Singhulars Got Talent</h2>
+                        </div>
+                        <p class="text-2xl text-black mb-2 font-medium">Presented by <span class="golden-gradient font-bold">GODSPEED</span></p>
+                        <div class="flex justify-center gap-2 mt-4 flex-wrap">
+                            <span class="px-4 py-2 border-2 rounded-full text-sm font-semibold" style="background: rgba(212, 175, 55, 0.1); border-color: #D4AF37; color: #D4AF37;">🎭 All Talents Welcome</span>
+                            <span class="px-4 py-2 border-2 rounded-full text-sm font-semibold" style="background: rgba(212, 175, 55, 0.1); border-color: #D4AF37; color: #D4AF37;">🏆 Big Prizes</span>
+                            <span class="px-4 py-2 border-2 rounded-full text-sm font-semibold" style="background: rgba(212, 175, 55, 0.1); border-color: #D4AF37; color: #D4AF37;">⭐ Fame Awaits</span>
+                        </div>
+                    </div>
+                    
+                    <div class="talent-grid mb-10">
+                        <div class="talent-card">
+                            <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=500&h=300&fit=crop" alt="Talent Show" class="rounded-2xl w-full h-64 object-cover">
+                        </div>
+                        <div class="talent-card">
+                            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=500&h=300&fit=crop" alt="Stage Performance" class="rounded-2xl w-full h-64 object-cover">
+                        </div>
+                        <div class="talent-card">
+                            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500&h=300&fit=crop" alt="Music Performance" class="rounded-2xl w-full h-64 object-cover">
+                        </div>
+                        <div class="talent-card">
+                            <img src="https://images.unsplash.com/photo-1478147427282-58a87a120781?w=500&h=300&fit=crop" alt="Dance Performance" class="rounded-2xl w-full h-64 object-cover">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6 mb-10">
+                        <p class="text-xl leading-relaxed text-center max-w-4xl mx-auto text-black">
+                            Welcome to <span class="golden-text font-bold text-2xl">SINGHULARS GOT TALENT</span>, the most prestigious talent hunt platform brought to you by <span class="golden-gradient font-bold text-2xl">GODSPEED</span>! 
+                            This is your opportunity to showcase your extraordinary skills and talents to the world.
+                        </p>
+                        
+                        <p class="text-lg leading-relaxed text-center max-w-3xl mx-auto text-black opacity-80">
+                            Whether you're a singer, dancer, musician, comedian, magician, or possess any unique talent, 
+                            this is your stage to shine! Join thousands of talented individuals across the nation in this 
+                            incredible journey of discovery, entertainment, and glory.
+                        </p>
+                        
+                        <div class="p-8 rounded-2xl border-2 mt-8 backdrop-blur-sm" style="background: rgba(255, 255, 255, 0.9); border-color: #D4AF37;">
+                            <h3 class="text-3xl golden-text font-bold mb-6 text-center">🌟 Event Highlights 🌟</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">🏆</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">National Competition</h4>
+                                        <p class="text-black text-sm opacity-80">Compete at the highest level</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">💰</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">Amazing Prizes</h4>
+                                        <p class="text-black text-sm opacity-80">Win big and get recognized</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">👨‍⚖️</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">Expert Judges</h4>
+                                        <p class="text-black text-sm opacity-80">Professional judging panel</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">🚀</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">Career Launch</h4>
+                                        <p class="text-black text-sm opacity-80">Platform to showcase your talent</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">📺</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">Media Coverage</h4>
+                                        <p class="text-black text-sm opacity-80">Get featured on major platforms</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-4 rounded-xl transition-all border" style="border-color: #F4D992; background: rgba(212, 175, 55, 0.05);">
+                                    <span class="golden-text text-3xl">🎪</span>
+                                    <div>
+                                        <h4 class="golden-text font-semibold text-lg">Live Performances</h4>
+                                        <p class="text-black text-sm opacity-80">Showcase on the grand stage</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="handleApplyNow()" class="golden-btn text-2xl font-bold py-6 px-16 rounded-2xl float pulse transform hover:scale-105 transition-all duration-300">
+                            🎯 APPLY NOW
+                        </button>
+                        <p class="text-black mt-4 opacity-70">Limited slots available - Apply today!</p>
+                    </div>
+                </div>
+
+                <!-- Application Form -->
+                <div id="applicationForm" class="hidden card-glass gradient-border rounded-3xl p-10 mt-8 fade-in">
+                    <h2 class="text-4xl font-bold logo-text golden-text text-center mb-4">Application Form</h2>
+                    <p class="text-center text-black mb-8 font-medium">Fill in your details to participate</p>
+                    
+                    <form id="talentForm" class="space-y-6">
+                        <div>
+                            <label class="block golden-text font-semibold mb-3 text-lg">✨ Full Name *</label>
+                            <input type="text" id="fullName" required class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all text-lg" style="border-color: #D4AF37;">
+                        </div>
+                        
+                        <div>
+                            <label class="block golden-text font-semibold mb-3 text-lg">📧 Email Address *</label>
+                            <input type="email" id="email" required readonly class="w-full bg-gray-100 border-2 px-5 py-4 rounded-xl transition-all text-lg" style="border-color: #D4AF37;">
+                        </div>
+                        
+                        <div>
+                            <label class="block golden-text font-semibold mb-3 text-lg">📱 Mobile Number *</label>
+                            <input type="tel" id="mobile" required pattern="[0-9]{10}" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all text-lg" style="border-color: #D4AF37;" placeholder="10-digit mobile number">
+                        </div>
+                        
+                        <div>
+                            <label class="block golden-text font-semibold mb-3 text-lg">🎭 Tell us about your talent (Max 1000 words) *</label>
+                            <textarea id="talentDescription" required maxlength="7000" rows="8" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all text-lg" placeholder="Describe your talent in detail... What makes you special?" style="border-color: #D4AF37;"></textarea>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-sm text-black opacity-70">Character count: <span id="charCount" class="golden-text font-semibold">0</span> / 7000</p>
+                                <p class="text-sm text-black opacity-60">Be as detailed as possible</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block golden-text font-semibold mb-3 text-lg">📤 Upload Performance Video/Image (Max 25MB) *</label>
+                            <input type="file" id="fileUpload" required accept="video/*,image/*,.pdf" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:transition-all" style="border-color: #D4AF37; file:background: #B68A2C; file:color: #F9F6F1;">
+                            <p class="text-sm text-black mt-2 opacity-70">📁 Accepted formats: Video, Image, PDF (Max: 25MB)</p>
+                            <p id="fileSize" class="text-sm golden-text mt-1 font-semibold"></p>
+                        </div>
+                        
+                        <div class="flex gap-4 pt-4">
+                            <button type="submit" id="submitBtn" class="flex-1 golden-btn text-xl font-bold py-5 px-8 rounded-xl hover:scale-105 transition-all">
+                                ✅ SUBMIT APPLICATION
+                            </button>
+                            <button type="button" onclick="hideApplicationForm()" class="flex-1 border-2 text-xl font-bold py-5 px-8 rounded-xl transition-all" style="background: #F9F6F1; border-color: #D4AF37; color: #000000;">
+                                ❌ CANCEL
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== USER LOGIN PAGE ==================== -->
+        <div id="userLoginPage" class="hidden min-h-screen flex items-center justify-center p-4">
+            <div class="card-glass gradient-border rounded-3xl p-10 max-w-md w-full fade-in">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 pulse" style="background: linear-gradient(135deg, #D4AF37, #B68A2C);">
+                        <svg class="w-10 h-10" fill="#F9F6F1" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold logo-text mb-2" style="color: #D4AF37;">GODSPEED</h1>
+                    <h2 class="text-xl font-bold golden-text mb-2">Participant Login</h2>
+                    <p class="text-black text-sm font-medium">Start Your Journey to Stardom</p>
+                </div>
+
+                <div id="googleSignInButton"></div>
+
+                <div class="flex items-center mb-6">
+                    <div class="flex-1 border-t-2" style="border-color: #D4AF37;"></div>
+                    <span class="px-4 text-black text-sm font-semibold">OR</span>
+                    <div class="flex-1 border-t-2" style="border-color: #D4AF37;"></div>
+                </div>
+
+                <div id="loginForm" class="space-y-4">
+                    <h3 class="text-lg golden-text font-semibold mb-4">Login with Email</h3>
+                    <input type="email" id="loginEmail" placeholder="Email Address" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <input type="password" id="loginPassword" placeholder="Password" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <button onclick="loginUser()" class="w-full golden-btn font-bold py-4 px-6 rounded-xl text-lg">LOGIN</button>
+                    <p class="text-center text-black text-sm">Don't have an account? <button onclick="toggleToRegister()" class="golden-text font-semibold hover:underline">Register</button></p>
+                </div>
+
+                <div id="registerForm" class="hidden space-y-4">
+                    <h3 class="text-lg golden-text font-semibold mb-4">Create Account</h3>
+                    <input type="text" id="registerName" placeholder="Full Name" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <input type="email" id="registerEmail" placeholder="Email Address" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <input type="password" id="registerPassword" placeholder="Create Password (min 6 characters)" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm Password" class="w-full bg-white border-2 px-5 py-4 rounded-xl transition-all" style="border-color: #D4AF37;">
+                    <button onclick="registerUser()" class="w-full golden-btn font-bold py-4 px-6 rounded-xl text-lg">REGISTER</button>
+                    <p class="text-center text-black text-sm">Already have an account? <button onclick="toggleToLogin()" class="golden-text font-semibold hover:underline">Login</button></p>
+                </div>
+
+                <button onclick="backToPublicPage()" class="w-full mt-6 border-2 font-semibold py-3 px-4 rounded-xl transition-all" style="background: #F9F6F1; border-color: #D4AF37; color: #000000;">Back</button>
+            </div>
+        </div>
+
+        <!-- ==================== ADMIN LOGIN MODAL ==================== -->
+        <div id="adminPasswordModal" class="modal">
+            <div class="card-glass gradient-border rounded-3xl p-10 max-w-md w-full mx-4 fade-in">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4" style="background: linear-gradient(135deg, #D4AF37, #B68A2C);">
+                        <svg class="w-10 h-10" fill="#F9F6F1" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl golden-text font-bold mb-2">Admin Portal</h3>
+                    <p class="text-black font-medium">Secure Access Required</p>
+                </div>
+                <input type="password" id="adminPassword" placeholder="Enter Admin Password" class="w-full bg-white border-2 px-5 py-4 rounded-xl mb-2 transition-all" style="border-color: #D4AF37;">
+                <p class="text-sm text-black mb-6 text-center opacity-60">Default password: admin123</p>
+                <div class="flex gap-3">
+                    <button onclick="verifyAdminPassword()" class="flex-1 golden-btn font-bold py-4 px-6 rounded-xl text-lg">Login</button>
+                    <button onclick="closeAdminLogin()" class="flex-1 font-bold py-4 px-6 rounded-xl border-2 transition-all" style="background: #F9F6F1; border-color: #D4AF37; color: #000000;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ADMIN DASHBOARD ==================== -->
+        <div id="adminDashboard" class="hidden min-h-screen">
+            <header class="card-glass border-b-2 p-5 sticky top-0 z-50" style="border-color: #D4AF37;">
+                <div class="container mx-auto flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center pulse" style="background: linear-gradient(135deg, #D4AF37, #B68A2C);">
+                            <svg class="w-6 h-6" fill="#F9F6F1" viewBox="0 0 24 24">
+                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold logo-text sparkle" style="color: #D4AF37;">ADMIN PANEL</h1>
+                            <p class="text-xs text-black opacity-70">Singhulars Got Talent - GODSPEED</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="px-6 py-3 rounded-xl font-semibold transition-all shadow-lg" style="background: #DC2626; color: #FFFFFF;">Logout</button>
+                </div>
+            </header>
+
+            <div class="container mx-auto p-6">
+                <div class="mb-6 flex justify-between items-center">
+                    <h2 class="text-4xl font-bold logo-text golden-text">Applications Dashboard</h2>
+                    <div class="text-right">
+                        <p class="text-black text-sm opacity-70">Total Applications</p>
+                        <p class="text-3xl golden-text font-bold" id="totalApps">0</p>
+                    </div>
+                </div>
+                
+                <div class="card-glass gradient-border rounded-3xl p-6 overflow-x-auto">
+                    <table class="w-full text-left" id="applicationsTable">
+                        <thead>
+                            <tr class="border-b-2" style="border-color: #D4AF37;">
+                                <th class="p-4 font-bold text-lg">Name</th>
+                                <th class="p-4 font-bold text-lg">Email</th>
+                                <th class="p-4 font-bold text-lg">Mobile</th>
+                                <th class="p-4 font-bold text-lg">Talent Description</th>
+                                <th class="p-4 font-bold text-lg">File</th>
+                                <th class="p-4 font-bold text-lg">Status</th>
+                                <th class="p-4 font-bold text-lg">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsBody">
+                            <tr>
+                                <td colspan="7" class="text-center text-black p-12 text-lg opacity-70">No applications yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SUCCESS MODAL ==================== -->
+        <div id="successModal" class="modal">
+            <div class="card-glass gradient-border rounded-3xl p-10 max-w-md w-full mx-4 text-center fade-in">
+                <div class="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 pulse" style="background: #4CAF50;">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl golden-text font-bold mb-4">SUCCESS!</h3>
+                <p class="text-black text-xl mb-6 font-medium">Your application has been submitted successfully!</p>
+                <p class="text-black mb-8 opacity-80">We will review your application and update you via email within 3-5 business days. Good luck! 🍀</p>
+                <button onclick="closeSuccessModal()" class="golden-btn font-bold py-4 px-10 rounded-xl text-lg">OK</button>
+            </div>
+        </div>
+
+        <!-- ==================== FILE VIEWER MODAL ==================== -->
+        <div id="fileViewerModal" class="modal">
+            <div class="card-glass gradient-border rounded-3xl p-8 max-w-5xl w-full mx-4 max-h-[95vh] overflow-auto fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-3xl golden-text font-bold">📂 File Preview</h3>
+                    <button onclick="closeFileViewer()" class="w-12 h-12 rounded-full flex items-center justify-center transition-all text-2xl" style="background: #DC2626; color: #FFFFFF;">×</button>
+                </div>
+                <div id="fileViewerContent" class="rounded-2xl p-6 min-h-[400px] flex items-center justify-center border-2" style="background: rgba(0, 0, 0, 0.05); border-color: #D4AF37;">
+                </div>
+                <div class="mt-6 flex gap-4">
+                    <button onclick="downloadFile()" class="flex-1 golden-btn font-bold py-4 px-6 rounded-xl text-lg">⬇️ Download File</button>
+                    <button onclick="closeFileViewer()" class="flex-1 border-2 font-bold py-4 px-6 rounded-xl transition-all" style="background: #F9F6F1; border-color: #D4AF37; color: #000000;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ==================== CONFIGURATION ====================
+        const GOOGLE_CLIENT_ID = '510466997628-85povrl38c2ccinvgb7op6993q3514s3.apps.googleusercontent.com';
+        
+        // EmailJS Configuration - YOUR CREDENTIALS
+        const EMAILJS_PUBLIC_KEY = 'YZpoRY4fYkni2gA6H';
+        const EMAILJS_SERVICE_ID = 'service_gjyxfni';
+        const TEMPLATE_APPROVED = 'template_79rj8l7';
+        const TEMPLATE_REJECTED = 'template_5z2riwt';
+
+        // Initialize EmailJS
+        (function(){
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        })();
+
+        // ==================== INITIALIZATION ====================
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // ==================== DATA MANAGEMENT ====================
+        let applications = JSON.parse(localStorage.getItem('applications')) || [];
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let currentUser = null;
+        let currentRole = null;
+
+        // ==================== EMAIL SENDING FUNCTIONS ====================
+        function sendApprovalEmail(applicationData) {
+            const templateParams = {
+                to_name: applicationData.name,
+                to_email: applicationData.email,
+                talent_type: applicationData.talent.substring(0, 100),
+                reply_to: 'singhularsgottalent@gmail.com'
+            };
+
+            return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_APPROVED, templateParams);
+        }
+
+        function sendRejectionEmail(applicationData) {
+            const templateParams = {
+                to_name: applicationData.name,
+                to_email: applicationData.email,
+                reply_to: 'singhularsgottalent@gmail.com'
+            };
+
+            return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_REJECTED, templateParams);
+        }
+
+        // ==================== GOOGLE SIGN-IN ====================
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleSignIn,
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("googleSignInButton"),
+                { 
+                    theme: "filled_blue", 
+                    size: "large",
+                    width: 350,
+                    text: "continue_with",
+                    shape: "rectangular",
+                    logo_alignment: "left"
+                }
+            );
+        };
+
+        function handleGoogleSignIn(response) {
+            const credential = parseJwt(response.credential);
+            console.log('Google Sign-In successful:', credential);
+            
+            let localUser = users.find(u => u.email === credential.email);
+            
+            if (!localUser) {
+                localUser = {
+                    id: Date.now(),
+                    googleId: credential.sub,
+                    name: credential.name,
+                    email: credential.email,
+                    photoURL: credential.picture,
+                    hasApplied: false,
+                    authProvider: 'google',
+                    createdAt: new Date().toISOString()
+                };
+                users.push(localUser);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            currentUser = localUser;
+            currentRole = 'user';
+            updateAuthButton();
+            backToPublicPage();
+            alert('✅ Welcome ' + credential.name + '!\n\nYou are now signed in with Google.');
+        }
+
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error('Error parsing JWT:', e);
+                return null;
+            }
+        }
+
+        // ==================== PAGE INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthButton();
+            
+            const textarea = document.getElementById('talentDescription');
+            const charCount = document.getElementById('charCount');
+            
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+
+            const fileInput = document.getElementById('fileUpload');
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    const fileSize = document.getElementById('fileSize');
+                    if (file) {
+                        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                        fileSize.textContent = `📊 File size: ${sizeMB} MB`;
+                        
+                        if (file.size > 25 * 1024 * 1024) {
+                            alert('⚠️ File size exceeds 25MB limit!');
+                            this.value = '';
+                            fileSize.textContent = '';
+                        }
+                    }
+                });
+            }
+
+            const form = document.getElementById('talentForm');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
+            }
+
+            // Add Enter key support for admin password
+            const adminPasswordInput = document.getElementById('adminPassword');
+            if (adminPasswordInput) {
+                adminPasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        verifyAdminPassword();
+                    }
+                });
+            }
+        });
+
+        // ==================== AUTH BUTTON ====================
+        function updateAuthButton() {
+            const authButtonContainer = document.getElementById('authButtonContainer');
+            
+            if (currentUser) {
+                authButtonContainer.innerHTML = `
+                    <div class="user-profile">
+                        ${currentUser.photoURL ? 
+                            `<img src="${currentUser.photoURL}" alt="${currentUser.name}">` : 
+                            `<div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #D4AF37, #B68A2C); color: #FFF; font-weight: bold;">
+                                ${currentUser.name.charAt(0).toUpperCase()}
+                            </div>`
+                        }
+                        <div class="hidden md:block">
+                            <p class="text-sm font-semibold text-black">${currentUser.name}</p>
+                            <p class="text-xs text-black opacity-60">${currentUser.email}</p>
+                        </div>
+                        <button onclick="logout()" class="ml-3 px-5 py-2 rounded-xl font-semibold transition-all shadow-lg" style="background: #DC2626; color: #FFFFFF;">
+                            Logout
+                        </button>
+                    </div>
+                `;
+            } else {
+                authButtonContainer.innerHTML = `
+                    <button id="authButton" onclick="handleAuthButton()" class="px-6 py-3 rounded-xl font-semibold transition-all shadow-lg golden-btn">
+                        Sign In
+                    </button>
+                `;
+            }
+        }
+
+        function handleAuthButton() {
+            if (currentUser) {
+                logout();
+            } else {
+                showUserLoginPage();
+            }
+        }
+
+        // ==================== APPLY NOW ====================
+        function handleApplyNow() {
+            if (!currentUser) {
+                alert('⚠️ Please sign in to apply for the event!');
+                showUserLoginPage();
+                return;
+            }
+
+            const existingApp = applications.find(app => app.userEmail === currentUser.email);
+            if (existingApp) {
+                alert('⚠️ You have already submitted your application! You can only apply once.\n\nStatus: ' + existingApp.status);
+                return;
+            }
+
+            if (currentUser.hasApplied) {
+                alert('⚠️ You have already submitted your application! You can only apply once.');
+                return;
+            }
+
+            showApplicationForm();
+        }
+
+        // ==================== NAVIGATION ====================
+        function showUserLoginPage() {
+            document.getElementById('publicEventPage').classList.add('hidden');
+            document.getElementById('userLoginPage').classList.remove('hidden');
+        }
+
+        function backToPublicPage() {
+            document.getElementById('userLoginPage').classList.add('hidden');
+            document.getElementById('publicEventPage').classList.remove('hidden');
+        }
+
+        function showApplicationForm() {
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('fullName').value = currentUser.name;
+            
+            document.getElementById('applicationForm').classList.remove('hidden');
+            window.scrollTo({ top: document.getElementById('applicationForm').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function hideApplicationForm() {
+            document.getElementById('applicationForm').classList.add('hidden');
+            document.getElementById('talentForm').reset();
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('fileSize').textContent = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================== EMAIL/PASSWORD AUTH ====================
+        function toggleToRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        function toggleToLogin() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        function registerUser() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            if (!name || !email || !password || !confirmPassword) {
+                alert('⚠️ Please fill all fields!');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('⚠️ Password must be at least 6 characters long!');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('⚠️ Passwords do not match!');
+                return;
+            }
+
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser) {
+                alert('⚠️ User with this email already exists!');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                password: password,
+                hasApplied: false,
+                authProvider: 'email',
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('✅ Registration successful! Please login.');
+            
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+            
+            toggleToLogin();
+        }
+
+        function loginUser() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('⚠️ Please enter email and password!');
+                return;
+            }
+
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                alert('⚠️ Invalid email or password!');
+                return;
+            }
+
+            currentUser = user;
+            currentRole = 'user';
+            updateAuthButton();
+            backToPublicPage();
+            alert('✅ Login successful! Welcome ' + user.name);
+        }
+
+        // ==================== ADMIN ====================
+        function showAdminLogin() {
+            document.getElementById('adminPasswordModal').classList.add('active');
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('adminPasswordModal').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function verifyAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'admin123') {
+                currentUser = 'Admin';
+                currentRole = 'admin';
+                closeAdminLogin();
+                showAdminDashboard();
+            } else {
+                alert('⚠️ Invalid admin password!');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('publicEventPage').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            loadApplications();
+        }
+
+        // ==================== LOGOUT ====================
+        function logout() {
+            if (currentUser && currentUser.authProvider === 'google') {
+                google.accounts.id.disableAutoSelect();
+            }
+            
+            currentUser = null;
+            currentRole = null;
+            updateAuthButton();
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('publicEventPage').classList.remove('hidden');
+            hideApplicationForm();
+            alert('✅ Logged out successfully!');
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (!currentUser) {
+                alert('⚠️ Please login first!');
+                return;
+            }
+
+            const existingApp = applications.find(app => app.userEmail === currentUser.email);
+            if (existingApp) {
+                alert('⚠️ You have already submitted your application!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ SUBMITTING...';
+            submitBtn.disabled = true;
+
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const formData = {
+                        id: Date.now(),
+                        userId: currentUser.id,
+                        userEmail: currentUser.email,
+                        userName: currentUser.name,
+                        userPhoto: currentUser.photoURL || null,
+                        name: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        mobile: document.getElementById('mobile').value,
+                        talent: document.getElementById('talentDescription').value,
+                        fileName: file.name,
+                        fileData: e.target.result,
+                        fileType: file.type,
+                        status: 'Pending',
+                        submittedAt: new Date().toLocaleString()
+                    };
+
+                    applications.push(formData);
+                    localStorage.setItem('applications', JSON.stringify(applications));
+
+                    currentUser.hasApplied = true;
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) {
+                        users[userIndex].hasApplied = true;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+                    
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    document.getElementById('successModal').classList.add('active');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('⚠️ Please upload a file!');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+            hideApplicationForm();
+        }
+
+        // ==================== ADMIN FUNCTIONS ====================
+        function loadApplications() {
+            applications = JSON.parse(localStorage.getItem('applications')) || [];
+            const tbody = document.getElementById('applicationsBody');
+            const totalApps = document.getElementById('totalApps');
+            
+            if (totalApps) {
+                totalApps.textContent = applications.length;
+            }
+            
+            if (applications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-black p-12 text-lg opacity-70">No applications yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = applications.map(app => `
+                <tr class="border-b transition-all" style="border-color: rgba(212, 175, 55, 0.2);" id="app-${app.id}">
+                    <td class="p-4">
+                        <div class="flex items-center gap-2">
+                            ${app.userPhoto ? 
+                                `<img src="${app.userPhoto}" alt="${app.name}" class="w-10 h-10 rounded-full border-2" style="border-color: #D4AF37;">` : 
+                                `<div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #D4AF37, #B68A2C); color: #FFF; font-weight: bold; font-size: 14px;">
+                                    ${app.name.charAt(0).toUpperCase()}
+                                </div>`
+                            }
+                            <span class="text-black font-semibold">${app.name}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-black">${app.email}</td>
+                    <td class="p-4 text-black">${app.mobile}</td>
+                    <td class="p-4 text-black"><div class="max-w-xs overflow-hidden text-ellipsis">${app.talent.substring(0, 100)}...</div></td>
+                    <td class="p-4">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-sm text-black">${app.fileName}</span>
+                            ${app.fileData ? `
+                                <button onclick="viewFile(${app.id})" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg" style="background: #2563EB; color: #FFFFFF;">
+                                    👁️ VIEW FILE
+                                </button>
+                            ` : '<span class="text-black text-xs opacity-50">No file</span>'}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-4 py-2 rounded-full text-sm font-semibold ${
+                            app.status === 'Approved' ? 'status-approved' : 
+                            app.status === 'Rejected' ? 'status-rejected' : 
+                            'status-pending'
+                        }">${app.status}</span>
+                    </td>
+                    <td class="p-4">
+                        ${app.status === 'Pending' ? `
+                            <div class="flex gap-2">
+                                <button onclick="approveApplication(${app.id})" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg approve-btn-${app.id}" style="background: #16A34A; color: #FFFFFF;">✅ APPROVE</button>
+                                <button onclick="rejectApplication(${app.id})" class="px-5 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg reject-btn-${app.id}" style="background: #DC2626; color: #FFFFFF;">❌ REJECT</button>
+                            </div>
+                        ` : `<span class="text-black opacity-50">Action taken</span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function approveApplication(id) {
+            const app = applications.find(a => a.id === id);
+            if (!app) return;
+
+            const approveBtn = document.querySelector('.approve-btn-' + id);
+            if (!approveBtn) return;
+
+            const originalText = approveBtn.innerHTML;
+            approveBtn.innerHTML = '⏳ SENDING EMAIL...';
+            approveBtn.disabled = true;
+
+            sendApprovalEmail(app)
+                .then(function(response) {
+                    console.log('✅ Approval email sent!', response.status);
+                    
+                    app.status = 'Approved';
+                    localStorage.setItem('applications', JSON.stringify(applications));
+                    
+                    alert(`✅ SUCCESS!\n\nApproval email has been sent to:\n${app.email}\n\nThe participant will receive congratulations message!`);
+                    
+                    loadApplications();
+                })
+                .catch(function(error) {
+                    console.error('❌ Email failed:', error);
+                    alert(`⚠️ Failed to send email!\n\nError: ${error.text || error}\n\nPlease try again.`);
+                    
+                    approveBtn.innerHTML = originalText;
+                    approveBtn.disabled = false;
+                });
+        }
+
+        function rejectApplication(id) {
+            const app = applications.find(a => a.id === id);
+            if (!app) return;
+
+            const rejectBtn = document.querySelector('.reject-btn-' + id);
+            if (!rejectBtn) return;
+
+            const originalText = rejectBtn.innerHTML;
+            rejectBtn.innerHTML = '⏳ SENDING EMAIL...';
+            rejectBtn.disabled = true;
+
+            sendRejectionEmail(app)
+                .then(function(response) {
+                    console.log('✅ Rejection email sent!', response.status);
+                    
+                    app.status = 'Rejected';
+                    localStorage.setItem('applications', JSON.stringify(applications));
+                    
+                    alert(`✅ SUCCESS!\n\nRejection email has been sent to:\n${app.email}\n\nThe participant will receive a polite rejection message.`);
+                    
+                    loadApplications();
+                })
+                .catch(function(error) {
+                    console.error('❌ Email failed:', error);
+                    alert(`⚠️ Failed to send email!\n\nError: ${error.text || error}\n\nPlease try again.`);
+                    
+                    rejectBtn.innerHTML = originalText;
+                    rejectBtn.disabled = false;
+                });
+        }
+
+        // ==================== FILE VIEWER ====================
+        let currentFileData = null;
+        let currentFileName = null;
+
+        function viewFile(id) {
+            const app = applications.find(a => a.id === id);
+            if (app && app.fileData) {
+                currentFileData = app.fileData;
+                currentFileName = app.fileName;
+                
+                const modal = document.getElementById('fileViewerModal');
+                const content = document.getElementById('fileViewerContent');
+                
+                if (app.fileType.startsWith('image/')) {
+                    content.innerHTML = `<img src="${app.fileData}" alt="${app.fileName}" class="max-w-full max-h-[600px] rounded-2xl shadow-2xl">`;
+                } else if (app.fileType.startsWith('video/')) {
+                    content.innerHTML = `<video controls class="max-w-full max-h-[600px] rounded-2xl shadow-2xl"><source src="${app.fileData}" type="${app.fileType}">Your browser does not support the video tag.</video>`;
+                } else if (app.fileType === 'application/pdf') {
+                    content.innerHTML = `<iframe src="${app.fileData}" class="w-full h-[600px] rounded-2xl shadow-2xl"></iframe>`;
+                } else {
+                    content.innerHTML = `<div class="text-center"><p class="text-black text-xl mb-4">Preview not available for this file type</p><p class="text-black opacity-70 text-lg">${app.fileName}</p></div>`;
+                }
+                
+                modal.classList.add('active');
+            }
+        }
+
+        function closeFileViewer() {
+            document.getElementById('fileViewerModal').classList.remove('active');
+            currentFileData = null;
+            currentFileName = null;
+        }
+
+        function downloadFile() {
+            if (currentFileData && currentFileName) {
+                const link = document.createElement('a');
+                link.href = currentFileData;
+                link.download = currentFileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    </script>
+
+</body>
+</html>
