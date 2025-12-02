@@ -1256,109 +1256,222 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
+            // Set page margins and dimensions
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 20;
+            const contentWidth = pageWidth - (margin * 2);
+            
             // Set background color
-            doc.setFillColor(250, 250, 250);
-            doc.rect(0, 0, 210, 297, 'F');
+            doc.setFillColor(255, 255, 255);
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
             
-            // Add modern header with logo area
+            // HEADER SECTION with gradient effect
             doc.setFillColor(232, 197, 71);
-            doc.rect(0, 0, 210, 45, 'F');
+            doc.rect(0, 0, pageWidth, 50, 'F');
             
-            doc.setFontSize(28);
+            // Add decorative border to header
+            doc.setFillColor(139, 69, 19);
+            doc.rect(0, 45, pageWidth, 5, 'F');
+            
+            // Company logo area (placeholder)
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(margin, 10, 30, 30, 3, 3, 'F');
+            doc.setFontSize(16);
+            doc.setTextColor(232, 197, 71);
+            doc.setFont('helvetica', 'bold');
+            doc.text('G', margin + 12, 28, { align: 'center' });
+            
+            // Company name and title
+            doc.setFontSize(32);
             doc.setTextColor(10, 10, 10);
             doc.setFont('helvetica', 'bold');
-            doc.text('GODSPEED', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(14);
-            doc.setTextColor(10, 10, 10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Singhulars Got Talent - Official Registration Receipt', 105, 30, { align: 'center' });
-            
-            // Receipt info section
-            doc.setFillColor(240, 240, 240);
-            doc.rect(15, 55, 180, 25, 'F');
+            doc.text('GODSPEED', pageWidth/2, 22, { align: 'center' });
             
             doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text('SINGHULARS GOT TALENT', pageWidth/2, 30, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(60, 60, 60);
+            doc.text('Official Registration Receipt', pageWidth/2, 38, { align: 'center' });
+            
+            // RECEIPT INFO SECTION
+            let currentY = 70;
+            
+            // Receipt info box
+            doc.setFillColor(248, 249, 250);
+            doc.roundedRect(margin, currentY, contentWidth, 25, 3, 3, 'F');
+            doc.setDrawColor(232, 197, 71);
+            doc.setLineWidth(1);
+            doc.roundedRect(margin, currentY, contentWidth, 25, 3, 3, 'S');
+            
+            doc.setFontSize(14);
+            doc.setTextColor(139, 69, 19);
             doc.setFont('helvetica', 'bold');
-            doc.text('RECEIPT INFORMATION', 20, 65);
+            doc.text('RECEIPT INFORMATION', margin + 10, currentY + 10);
             
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(`Receipt Date: ${new Date().toLocaleDateString('en-GB', { 
+            doc.setTextColor(0, 0, 0);
+            
+            const receiptDate = new Date().toLocaleDateString('en-GB', { 
                 year: 'numeric', month: 'long', day: 'numeric', 
-                hour: '2-digit', minute: '2-digit'
-            })}`, 20, 72);
-            doc.text(`Receipt ID: SGT-${pendingApplication.id}`, 120, 72);
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
             
-            // Participant details section
+            doc.text(`Receipt Date: ${receiptDate}`, margin + 10, currentY + 18);
+            doc.text(`Receipt ID: SGT-${pendingApplication.id}`, margin + 105, currentY + 18);
+            
+            currentY += 40;
+            
+            // PARTICIPANT DETAILS SECTION
             doc.setFillColor(232, 197, 71, 0.1);
-            doc.rect(15, 90, 180, 70, 'F');
+            doc.roundedRect(margin, currentY, contentWidth, 85, 3, 3, 'F');
+            doc.setDrawColor(232, 197, 71);
+            doc.roundedRect(margin, currentY, contentWidth, 85, 3, 3, 'S');
             
-            doc.setFontSize(14);
+            doc.setFontSize(16);
             doc.setTextColor(139, 69, 19);
             doc.setFont('helvetica', 'bold');
-            doc.text('PARTICIPANT DETAILS', 20, 105);
+            doc.text('PARTICIPANT DETAILS', margin + 10, currentY + 15);
             
             doc.setFontSize(11);
             doc.setTextColor(0, 0, 0);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Full Name: ${pendingApplication.name}`, 20, 120);
-            doc.text(`Email Address: ${pendingApplication.email}`, 20, 130);
-            doc.text(`Mobile Number: ${pendingApplication.mobile}`, 20, 140);
-            doc.text(`Age: ${pendingApplication.age} years`, 20, 150);
-            doc.text(`Age Category: ${pendingApplication.ageCategory || getAgeCategory(pendingApplication.age)}`, 120, 150);
-            doc.text(`Date of Birth: ${new Date(pendingApplication.dob).toLocaleDateString('en-GB')}`, 20, 160);
             
-            // Payment details section with modern styling
-            doc.setFillColor(46, 125, 50, 0.1);
-            doc.rect(15, 170, 180, 50, 'F');
-            
-            doc.setFontSize(14);
-            doc.setTextColor(46, 125, 50);
+            // Left column
+            doc.text(`Full Name:`, margin + 10, currentY + 30);
             doc.setFont('helvetica', 'bold');
-            doc.text('PAYMENT CONFIRMATION', 20, 185);
+            doc.text(`${pendingApplication.name}`, margin + 35, currentY + 30);
+            doc.setFont('helvetica', 'normal');
+            
+            doc.text(`Email Address:`, margin + 10, currentY + 40);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${pendingApplication.email}`, margin + 40, currentY + 40);
+            doc.setFont('helvetica', 'normal');
+            
+            doc.text(`Mobile Number:`, margin + 10, currentY + 50);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${pendingApplication.mobile}`, margin + 45, currentY + 50);
+            doc.setFont('helvetica', 'normal');
+            
+            // Right column
+            doc.text(`Age:`, margin + 105, currentY + 30);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${pendingApplication.age} years`, margin + 120, currentY + 30);
+            doc.setFont('helvetica', 'normal');
+            
+            doc.text(`Category:`, margin + 105, currentY + 40);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${pendingApplication.ageCategory || getAgeCategory(pendingApplication.age)}`, margin + 130, currentY + 40);
+            doc.setFont('helvetica', 'normal');
+            
+            doc.text(`Date of Birth:`, margin + 105, currentY + 50);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${new Date(pendingApplication.dob).toLocaleDateString('en-GB')}`, margin + 140, currentY + 50);
+            
+            // Files information
+            const fileCount = pendingApplication.files || 1;
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Files Uploaded:`, margin + 10, currentY + 65);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${fileCount} file(s)`, margin + 45, currentY + 65);
+            
+            currentY += 100;
+            
+            // PAYMENT CONFIRMATION SECTION
+            doc.setFillColor(220, 252, 231);
+            doc.roundedRect(margin, currentY, contentWidth, 65, 3, 3, 'F');
+            doc.setDrawColor(34, 197, 94);
+            doc.setLineWidth(2);
+            doc.roundedRect(margin, currentY, contentWidth, 65, 3, 3, 'S');
+            
+            doc.setFontSize(16);
+            doc.setTextColor(21, 128, 61);
+            doc.setFont('helvetica', 'bold');
+            doc.text('✓ PAYMENT CONFIRMATION', margin + 10, currentY + 15);
             
             doc.setFontSize(11);
             doc.setTextColor(0, 0, 0);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Transaction ID: ${pendingApplication.paymentId}`, 20, 200);
-            doc.text(`Registration Fee: AED ${REGISTRATION_FEE_AED}`, 20, 210);
-            doc.text('Payment Status: ✓ SUCCESSFUL', 120, 200);
-            doc.text('Payment Method: Stripe Gateway', 120, 210);
             
-            // Competition info section
-            doc.setFillColor(240, 240, 240);
-            doc.rect(15, 235, 180, 30, 'F');
+            // Payment details in table format
+            doc.text(`Transaction ID:`, margin + 10, currentY + 30);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${pendingApplication.paymentId}`, margin + 50, currentY + 30);
+            doc.setFont('helvetica', 'normal');
             
-            doc.setFontSize(12);
+            doc.text(`Registration Fee:`, margin + 10, currentY + 40);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(21, 128, 61);
+            doc.text(`AED ${REGISTRATION_FEE_AED}`, margin + 50, currentY + 40);
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Payment Status:`, margin + 105, currentY + 30);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(21, 128, 61);
+            doc.text(`✓ SUCCESSFUL`, margin + 145, currentY + 30);
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Payment Method:`, margin + 105, currentY + 40);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Stripe Gateway`, margin + 145, currentY + 40);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(60, 60, 60);
+            doc.text(`Payment Date:`, margin + 10, currentY + 55);
+            doc.text(`${receiptDate}`, margin + 50, currentY + 55);
+            
+            currentY += 80;
+            
+            // NEXT STEPS SECTION
+            doc.setFillColor(245, 245, 245);
+            doc.roundedRect(margin, currentY, contentWidth, 45, 3, 3, 'F');
+            doc.setDrawColor(156, 163, 175);
+            doc.roundedRect(margin, currentY, contentWidth, 45, 3, 3, 'S');
+            
+            doc.setFontSize(14);
             doc.setTextColor(139, 69, 19);
             doc.setFont('helvetica', 'bold');
-            doc.text('WHAT\'S NEXT?', 20, 248);
+            doc.text('📋 WHAT\'S NEXT?', margin + 10, currentY + 15);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text('• You will receive an email confirmation within 24 hours', margin + 10, currentY + 25);
+            doc.text('• Our team will review your application within 3-5 business days', margin + 10, currentY + 32);
+            doc.text('• Keep this receipt for your records and future reference', margin + 10, currentY + 39);
+            
+            currentY += 60;
+            
+            // FOOTER SECTION
+            doc.setDrawColor(232, 197, 71);
+            doc.setLineWidth(3);
+            doc.line(margin, currentY, pageWidth - margin, currentY);
+            
+            currentY += 10;
             
             doc.setFontSize(9);
-            doc.setTextColor(0, 0, 0);
-            doc.setFont('helvetica', 'normal');
-            doc.text('• You will receive an email confirmation within 24 hours', 20, 255);
-            doc.text('• Our team will review your application within 3-5 business days', 20, 262);
-            doc.text('• Keep this receipt for your records', 20, 269);
-            
-            // Modern footer
-            doc.setDrawColor(232, 197, 71);
-            doc.setLineWidth(2);
-            doc.line(15, 280, 195, 280);
-            
-            doc.setFontSize(8);
             doc.setTextColor(100, 100, 100);
             doc.setFont('helvetica', 'italic');
-            doc.text('This is an official computer-generated receipt. No physical signature required.', 105, 288, { align: 'center' });
-            doc.text('For support, contact us at singhularsgottalent@gmail.com | Visit: www.godspeed.com', 105, 294, { align: 'center' });
+            doc.text('This is an official computer-generated receipt. No physical signature required.', pageWidth/2, currentY, { align: 'center' });
+            
+            doc.setFontSize(8);
+            doc.text('Powered by SINGHULARS | Hosted by GODSPEED', pageWidth/2, currentY + 8, { align: 'center' });
+            doc.text('Contact: singhularsgottalent@gmail.com | Visit: www.singhularsgottalent.com', pageWidth/2, currentY + 16, { align: 'center' });
+            
+            // Add page border
+            doc.setDrawColor(232, 197, 71);
+            doc.setLineWidth(1);
+            doc.rect(5, 5, pageWidth - 10, pageHeight - 10);
             
             // Save the PDF with formatted filename
             const filename = `Singhulars_Got_Talent_Receipt_${pendingApplication.name.replace(/\s+/g, '_')}_${pendingApplication.id}.pdf`;
             doc.save(filename);
         }
-
         // ==================== STRIPE PAYMENT FUNCTION ====================
         async function processStripePayment() {
             const submitBtn = document.getElementById('submitBtn');
