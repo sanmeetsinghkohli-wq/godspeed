@@ -2286,7 +2286,7 @@
         </div>
     </div>
     <script> 
-                     // ==================== CONFIGURATION ====================
+                          // ==================== CONFIGURATION ====================
         const GOOGLE_CLIENT_ID = '510466997628-85povrl38c2ccinvgb7op6993q3514s3.apps.googleusercontent.com';
         const EMAILJS_PUBLIC_KEY = 'YZpoRY4fYkni2gA6H';
         const EMAILJS_SERVICE_ID = 'service_gjyxfni';
@@ -2295,7 +2295,9 @@
         const STRIPE_PUBLISHABLE_KEY = 'pk_test_51QOz2oCvpkJKWzh6fvb6ZfJdKUjB9J6OEYY0HAbLQHqFcGo4KhNz2DeMvzEA6bqMXEFHlcjXO2NiGi2TFmBGjZd400Q2Oq7ZC8';
         const REGISTRATION_FEE_AED = 55;
         const CURRENCY = 'AED';
-        const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+        
+        // ⚠️ REPLACE THIS WITH YOUR DEPLOYED WEB APP URL
+        const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxkBaiYSQSZ13Y9jw648rAmpQqdlQVfDReyKCESFWwHkvK53Qb9iC0xhIn2PTCrL4cjFw/exec';
 
         // Initialize EmailJS
         (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
@@ -2307,7 +2309,7 @@
         let currentUser = null;
         let currentRole = null;
         let pendingApplication = null;
-        let currentViewingFile = null;
+        let currentViewingApp = null;
 
         const sessionData = {
             applications: [],
@@ -2406,29 +2408,32 @@
             initEventListeners();
             populateCountryCodes();
             populateTalentCategories();
+            addAnimationStyles();
         };
 
         function initEventListeners() {
             // Navbar scroll effect
             window.addEventListener('scroll', () => {
                 const navbar = document.getElementById('navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
+                if (navbar) {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
                 }
             });
 
-            // Character counter
+            // Character counter for talent description
             const textarea = document.getElementById('talentDescription');
             const charCount = document.getElementById('charCount');
-            if (textarea) {
+            if (textarea && charCount) {
                 textarea.addEventListener('input', function() {
                     charCount.textContent = this.value.length;
                 });
             }
 
-            // File input
+            // File input change handler
             const fileInput = document.getElementById('fileUpload');
             if (fileInput) {
                 fileInput.addEventListener('change', handleFileSelect);
@@ -2440,13 +2445,13 @@
                 form.addEventListener('submit', handleFormSubmit);
             }
 
-            // Talent category change
+            // Talent category change - update subcategories
             const categorySelect = document.getElementById('talentCategory');
             if (categorySelect) {
                 categorySelect.addEventListener('change', updateSubCategories);
             }
 
-            // Enter key for admin password
+            // Admin password enter key
             const adminPasswordInput = document.getElementById('adminPassword');
             if (adminPasswordInput) {
                 adminPasswordInput.addEventListener('keypress', function(e) {
@@ -2455,6 +2460,51 @@
                     }
                 });
             }
+
+            // Close modals on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAllModals();
+                }
+            });
+
+            // Close modals on backdrop click
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        function addAnimationStyles() {
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes scaleIn {
+                    from { transform: scale(0.9); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.classList.remove('active');
+            });
         }
 
         // ==================== POPULATE DROPDOWNS ====================
@@ -2462,7 +2512,7 @@
             const select = document.getElementById('countryCode');
             if (!select) return;
 
-            select.innerHTML = '<option value="">Select</option>';
+            select.innerHTML = '<option value="">Select Country</option>';
             countryCodes.forEach(cc => {
                 const option = document.createElement('option');
                 option.value = cc.code;
@@ -2475,7 +2525,7 @@
             const select = document.getElementById('talentCategory');
             if (!select) return;
 
-            select.innerHTML = '<option value="">Select Category</option>';
+            select.innerHTML = '<option value="">Select Talent Category</option>';
             Object.keys(talentCategories).forEach(category => {
                 const option = document.createElement('option');
                 option.value = category;
@@ -2579,7 +2629,7 @@
                     if (file.size > 50 * 1024 * 1024) {
                         hasOversizedFile = true;
                         filesHtml += `
-                            <div class="file-item" style="border: 1px solid rgba(239, 68, 68, 0.5);">
+                            <div class="file-item" style="border: 1px solid rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);">
                                 <span class="file-item-name">❌ ${file.name}</span>
                                 <span class="file-item-size" style="color: #F87171;">${sizeMB} MB (Too large!)</span>
                             </div>
@@ -2600,7 +2650,7 @@
                 fileSize.textContent = `Total: ${totalSizeMB} MB (${files.length} file${files.length > 1 ? 's' : ''})`;
                 
                 if (hasOversizedFile) {
-                    alert('⚠️ Some files exceed the 50MB limit! Please remove them.');
+                    showNotification('warning', 'Some files exceed 50MB limit!');
                 }
             } else {
                 filesList.innerHTML = '';
@@ -2608,48 +2658,157 @@
             }
         }
 
-        // ==================== GOOGLE SHEETS FUNCTIONS ====================
+        // ==================== GOOGLE SHEETS & DRIVE FUNCTIONS ====================
         async function saveToGoogleSheets(data) {
             try {
+                console.log('📤 Uploading files to Google Drive...');
+                
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '⏳ Uploading to Google Drive...';
+                }
+                
+                const applicationData = {
+                    action: 'saveApplication',
+                    data: {
+                        id: data.id,
+                        userId: data.userId,
+                        userEmail: data.userEmail,
+                        userName: data.userName,
+                        userPhoto: data.userPhoto,
+                        name: data.name,
+                        email: data.email,
+                        countryCode: data.countryCode,
+                        mobile: data.mobile,
+                        dob: data.dob,
+                        age: data.age,
+                        ageCategory: data.ageCategory,
+                        talentCategory: data.talentCategory,
+                        talentSubCategory: data.talentSubCategory,
+                        talent: data.talent,
+                        files: data.files,
+                        fileNames: data.fileNames,
+                        fileTypes: data.fileTypes,
+                        fileData: data.fileData, // Base64 - will be uploaded to Drive
+                        paymentId: data.paymentId,
+                        paymentAmount: data.paymentAmount,
+                        paymentCurrency: data.paymentCurrency,
+                        paymentStatus: data.paymentStatus,
+                        status: data.status,
+                        submittedAt: data.submittedAt
+                    }
+                };
+                
+                console.log('Sending to Apps Script:', data.fileNames);
+                
                 const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'saveApplication', data: data })
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(applicationData)
                 });
-                console.log('✅ Data saved to Google Sheets');
-                return true;
+                
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    console.log('Response received (non-JSON)');
+                    result = { success: true };
+                }
+                
+                if (result.success) {
+                    console.log('✅ Application saved successfully!');
+                    console.log('📁 Drive URLs:', result.driveUrls);
+                    console.log('📂 Folder URL:', result.folderUrl);
+                    
+                    data.driveUrls = result.driveUrls || [];
+                    data.folderUrl = result.folderUrl || '';
+                }
+                
+                return result;
+                
             } catch (error) {
-                console.error('❌ Error saving to Google Sheets:', error);
-                // Still save locally
-                return true;
+                console.error('❌ Error saving:', error);
+                return { success: false, error: error.message };
             }
         }
 
         async function loadFromGoogleSheets() {
             try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getApplications`);
-                const data = await response.json();
-                return data.applications || [];
+                console.log('📥 Loading applications...');
+                
+                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getApplications`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.applications) {
+                    console.log('✅ Loaded', result.applications.length, 'applications');
+                    return result.applications;
+                } else {
+                    console.warn('⚠️ No applications found');
+                    return [];
+                }
+                
             } catch (error) {
-                console.error('❌ Error loading from Google Sheets:', error);
-                return sessionData.applications;
+                console.error('❌ Error loading:', error);
+                return sessionData.applications || [];
             }
         }
 
         async function updateStatusInGoogleSheets(id, status) {
             try {
-                await fetch(GOOGLE_SHEETS_URL, {
+                console.log('📤 Updating status:', id, '->', status);
+                
+                const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'updateStatus', id: id, status: status })
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'updateStatus',
+                        id: String(id),
+                        status: status
+                    })
                 });
-                console.log('✅ Status updated in Google Sheets');
-                return true;
+                
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    result = { success: true };
+                }
+                
+                if (result.success) {
+                    console.log('✅ Status updated');
+                }
+                
+                return result;
+                
             } catch (error) {
                 console.error('❌ Error updating status:', error);
-                return false;
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function getStatsFromGoogleSheets() {
+            try {
+                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getStats`);
+                const result = await response.json();
+                
+                if (result.success && result.stats) {
+                    return result.stats;
+                }
+                return null;
+                
+            } catch (error) {
+                console.error('❌ Error getting stats:', error);
+                return null;
             }
         }
 
@@ -2658,7 +2817,7 @@
             const credential = parseJwt(response.credential);
             
             if (!credential) {
-                alert('❌ Failed to parse Google credentials');
+                showNotification('error', 'Failed to sign in with Google');
                 return;
             }
 
@@ -2720,7 +2879,7 @@
                 `;
             } else {
                 navActions.innerHTML = `
-                    <button onclick="handleAuthButton()" class="btn btn-secondary" id="authBtn">Sign In</button>
+                    <button onclick="showUserLoginPage()" class="btn btn-secondary" id="authBtn">Sign In</button>
                     <button onclick="showAdminLogin()" class="btn btn-ghost">Admin</button>
                 `;
             }
@@ -2742,9 +2901,13 @@
                 return;
             }
 
-            const existingApp = sessionData.applications.find(app => app.userEmail === currentUser.email);
+            // Check if user already applied
+            const existingApp = sessionData.applications.find(app => 
+                app.userEmail === currentUser.email || app.email === currentUser.email
+            );
+            
             if (existingApp) {
-                showNotification('warning', `You have already submitted an application!\nStatus: ${existingApp.status}`);
+                showNotification('warning', `You have already applied!\nStatus: ${existingApp.status}`);
                 return;
             }
 
@@ -2753,6 +2916,7 @@
 
         function showUserLoginPage() {
             document.getElementById('publicPage').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
             document.getElementById('userLoginPage').classList.remove('hidden');
             document.getElementById('userLoginPage').style.display = 'flex';
         }
@@ -2760,23 +2924,39 @@
         function backToPublicPage() {
             document.getElementById('userLoginPage').classList.add('hidden');
             document.getElementById('userLoginPage').style.display = 'none';
+            document.getElementById('adminDashboard').classList.add('hidden');
             document.getElementById('publicPage').classList.remove('hidden');
         }
 
         function showApplicationForm() {
-            document.getElementById('email').value = currentUser.email;
-            document.getElementById('fullName').value = currentUser.name;
+            const emailInput = document.getElementById('email');
+            const nameInput = document.getElementById('fullName');
+            
+            if (emailInput) emailInput.value = currentUser.email;
+            if (nameInput) nameInput.value = currentUser.name;
+            
             document.getElementById('applicationSection').classList.remove('hidden');
             document.getElementById('applicationSection').scrollIntoView({ behavior: 'smooth' });
         }
 
         function hideApplicationForm() {
             document.getElementById('applicationSection').classList.add('hidden');
-            document.getElementById('talentForm').reset();
-            document.getElementById('charCount').textContent = '0';
-            document.getElementById('fileSize').textContent = '';
-            document.getElementById('ageDisplay').innerHTML = '';
-            document.getElementById('filesList').innerHTML = '';
+            
+            // Reset form
+            const form = document.getElementById('talentForm');
+            if (form) form.reset();
+            
+            const charCount = document.getElementById('charCount');
+            if (charCount) charCount.textContent = '0';
+            
+            const fileSize = document.getElementById('fileSize');
+            if (fileSize) fileSize.textContent = '';
+            
+            const ageDisplay = document.getElementById('ageDisplay');
+            if (ageDisplay) ageDisplay.innerHTML = '';
+            
+            const filesList = document.getElementById('filesList');
+            if (filesList) filesList.innerHTML = '';
             
             // Reset subcategory
             const subCategorySelect = document.getElementById('talentSubCategory');
@@ -2811,7 +2991,7 @@
             }
 
             if (!validateEmail(email)) {
-                showNotification('error', 'Please enter a valid email address!');
+                showNotification('error', 'Please enter a valid email!');
                 return;
             }
 
@@ -2883,7 +3063,9 @@
         // ==================== ADMIN ====================
         function showAdminLogin() {
             document.getElementById('adminPasswordModal').classList.add('active');
-            document.getElementById('adminPassword').focus();
+            setTimeout(() => {
+                document.getElementById('adminPassword').focus();
+            }, 100);
         }
 
         function closeAdminLogin() {
@@ -2898,6 +3080,7 @@
                 currentRole = 'admin';
                 closeAdminLogin();
                 showAdminDashboard();
+                showNotification('success', 'Welcome Admin!');
             } else {
                 showNotification('error', 'Invalid admin password!');
             }
@@ -2924,8 +3107,7 @@
             hideApplicationForm();
             showNotification('success', 'Logged out successfully!');
         }
-
-        // ==================== PAYMENT PROCESSING ====================
+                // ==================== PAYMENT PROCESSING ====================
         async function processStripePayment() {
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerHTML;
@@ -2973,17 +3155,11 @@
                 return;
             }
 
-            // Check for existing application
-            const existingApp = sessionData.applications.find(app => app.userEmail === currentUser.email);
-            if (existingApp) {
-                showNotification('warning', `You have already submitted an application!\nStatus: ${existingApp.status}`);
-                return;
-            }
-
             // Validate required fields
             const countryCode = document.getElementById('countryCode').value;
             const talentCategory = document.getElementById('talentCategory').value;
             const mobile = document.getElementById('mobile').value;
+            const talentDescription = document.getElementById('talentDescription').value;
 
             if (!countryCode) {
                 showNotification('error', 'Please select a country code!');
@@ -2999,13 +3175,27 @@
                 showNotification('error', 'Please enter a valid mobile number!');
                 return;
             }
+
+            if (!talentDescription || talentDescription.length < 50) {
+                showNotification('error', 'Please describe your talent (min 50 characters)!');
+                return;
+            }
+
+            // Check for existing application
+            const existingApp = sessionData.applications.find(app => 
+                app.userEmail === currentUser.email || app.email === currentUser.email
+            );
+            if (existingApp) {
+                showNotification('warning', `You have already submitted an application!\nStatus: ${existingApp.status}`);
+                return;
+            }
             
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerHTML;
 
             processStripePayment()
                 .then((paymentId) => {
-                    submitBtn.innerHTML = '⏳ Uploading Files...';
+                    submitBtn.innerHTML = '⏳ Processing files...';
                     
                     const fileInput = document.getElementById('fileUpload');
                     const files = fileInput.files;
@@ -3017,10 +3207,10 @@
                         return;
                     }
 
-                    // Check for oversized files
+                    // Validate file sizes
                     for (let i = 0; i < files.length; i++) {
                         if (files[i].size > 50 * 1024 * 1024) {
-                            showNotification('error', 'Please remove files over 50MB!');
+                            showNotification('error', `File too large: ${files[i].name} (max 50MB)`);
                             submitBtn.innerHTML = originalText;
                             submitBtn.disabled = false;
                             return;
@@ -3044,7 +3234,7 @@
                     }
                     
                     Promise.all(filePromises).then((fileDataArray) => {
-                        submitBtn.innerHTML = '⏳ Saving Application...';
+                        submitBtn.innerHTML = '⏳ Uploading to Google Drive...';
 
                         const fullMobile = countryCode + mobile;
                         const talentSubCategory = document.getElementById('talentSubCategory')?.value || '';
@@ -3064,14 +3254,11 @@
                             ageCategory: ageData.category,
                             talentCategory: talentCategory,
                             talentSubCategory: talentSubCategory,
-                            talent: document.getElementById('talentDescription').value,
+                            talent: talentDescription,
                             files: files.length,
                             fileNames: fileNames,
                             fileData: fileDataArray,
                             fileTypes: fileTypes,
-                            fileName: fileNames[0],
-                            primaryFileData: fileDataArray[0],
-                            fileType: fileTypes[0],
                             status: 'Pending',
                             paymentId: paymentId,
                             paymentAmount: REGISTRATION_FEE_AED,
@@ -3080,10 +3267,16 @@
                             submittedAt: new Date().toLocaleString()
                         };
 
-                        // Save to Google Sheets
-                        saveToGoogleSheets(formData).then(() => {
-                            sessionData.applications.push(formData);
-                            pendingApplication = formData;
+                        // Save to Google Sheets (files uploaded to Drive)
+                        saveToGoogleSheets(formData).then((result) => {
+                            // Store application without base64 data
+                            const appToStore = { ...formData };
+                            delete appToStore.fileData; // Remove base64 data
+                            appToStore.driveUrls = result.driveUrls || [];
+                            appToStore.folderUrl = result.folderUrl || '';
+                            
+                            sessionData.applications.push(appToStore);
+                            pendingApplication = appToStore;
 
                             // Update user status
                             currentUser.hasApplied = true;
@@ -3101,67 +3294,20 @@
                             document.getElementById('successCategory').textContent = talentCategory;
                             document.getElementById('successModal').classList.add('active');
 
-                            // Send confirmation email via EmailJS
-                            sendConfirmationEmail(formData);
                         }).catch(err => {
                             console.error('Save error:', err);
-                            // Still save locally
-                            sessionData.applications.push(formData);
-                            pendingApplication = formData;
-                            
+                            showNotification('error', 'Error saving application. Please try again.');
                             submitBtn.innerHTML = originalText;
                             submitBtn.disabled = false;
-                            
-                            document.getElementById('successPaymentId').textContent = paymentId;
-                            document.getElementById('successEmail').textContent = formData.email;
-                            document.getElementById('successCategory').textContent = talentCategory;
-                            document.getElementById('successModal').classList.add('active');
                         });
                     });
                 })
                 .catch((error) => {
                     console.error('Payment error:', error);
-                    showNotification('error', 'Payment failed: ' + (error.message || 'Please try again'));
+                    showNotification('error', error.message || 'Payment failed');
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 });
-        }
-
-        // ==================== EMAIL FUNCTIONS ====================
-        function sendConfirmationEmail(appData) {
-            try {
-                emailjs.send(EMAILJS_SERVICE_ID, 'template_confirmation', {
-                    to_email: appData.email,
-                    to_name: appData.name,
-                    payment_id: appData.paymentId,
-                    amount: `${appData.paymentCurrency} ${appData.paymentAmount}`,
-                    category: appData.talentCategory,
-                    age_category: appData.ageCategory
-                }).then(() => {
-                    console.log('✅ Confirmation email sent');
-                }).catch(err => {
-                    console.warn('Email send failed:', err);
-                });
-            } catch (e) {
-                console.warn('EmailJS error:', e);
-            }
-        }
-
-        function sendStatusEmail(email, name, status) {
-            try {
-                const templateId = status === 'Approved' ? TEMPLATE_APPROVED : TEMPLATE_REJECTED;
-                emailjs.send(EMAILJS_SERVICE_ID, templateId, {
-                    to_email: email,
-                    to_name: name,
-                    status: status
-                }).then(() => {
-                    console.log('✅ Status email sent');
-                }).catch(err => {
-                    console.warn('Status email failed:', err);
-                });
-            } catch (e) {
-                console.warn('EmailJS error:', e);
-            }
         }
 
         function closeSuccessModal() {
@@ -3169,177 +3315,15 @@
             hideApplicationForm();
         }
 
-        // ==================== RECEIPT GENERATION ====================
-        function generateReceipt() {
-            if (!pendingApplication) {
-                showNotification('error', 'No application data found!');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Header Background - Golden color #f6cc68
-            doc.setFillColor(246, 204, 104);
-            doc.rect(0, 0, 210, 55, 'F');
-            
-            // Dark accent line
-            doc.setFillColor(1, 0, 0);
-            doc.rect(0, 50, 210, 5, 'F');
-            
-            // Logo/Title
-            doc.setFontSize(32);
-            doc.setTextColor(1, 0, 0);
-            doc.setFont('helvetica', 'bold');
-            doc.text('GODSPEED', 105, 25, { align: 'center' });
-            
-            doc.setFontSize(14);
-            doc.text('SINGHULARS GOT TALENT', 105, 35, { align: 'center' });
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('OFFICIAL PAYMENT RECEIPT', 105, 45, { align: 'center' });
-            
-            // Content section
-            let y = 70;
-            
-            // Receipt title
-            doc.setTextColor(1, 0, 0);
-            doc.setFontSize(18);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Payment Receipt', 14, y);
-            
-            // Receipt number
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Receipt #: ${pendingApplication.paymentId}`, 196, y, { align: 'right' });
-            
-            y += 15;
-            
-            // Divider line
-            doc.setDrawColor(246, 204, 104);
-            doc.setLineWidth(0.5);
-            doc.line(14, y, 196, y);
-            
-            y += 10;
-            
-            // Applicant Details Section
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(1, 0, 0);
-            doc.text('Applicant Details', 14, y);
-            y += 8;
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(60, 60, 60);
-            
-            const details = [
-                ['Full Name:', pendingApplication.userName || pendingApplication.name],
-                ['Email:', pendingApplication.userEmail || pendingApplication.email],
-                ['Mobile:', pendingApplication.mobile || '—'],
-                ['Date of Birth:', pendingApplication.dob || '—'],
-                ['Age:', `${pendingApplication.age || '—'} years`],
-                ['Age Category:', pendingApplication.ageCategory || '—'],
-                ['Talent Category:', pendingApplication.talentCategory || '—'],
-                ['Sub-Category:', pendingApplication.talentSubCategory || '—']
-            ];
-            
-            details.forEach(([label, value]) => {
-                doc.setFont('helvetica', 'bold');
-                doc.text(label, 14, y);
-                doc.setFont('helvetica', 'normal');
-                doc.text(String(value), 65, y);
-                y += 7;
-            });
-            
-            y += 5;
-            
-            // Payment Details Section
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(1, 0, 0);
-            doc.text('Payment Details', 14, y);
-            y += 8;
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(60, 60, 60);
-            
-            const paymentDetails = [
-                ['Payment ID:', pendingApplication.paymentId],
-                ['Amount:', `${pendingApplication.paymentCurrency || 'AED'} ${pendingApplication.paymentAmount || REGISTRATION_FEE_AED}`],
-                ['Payment Status:', pendingApplication.paymentStatus || 'Paid'],
-                ['Payment Method:', 'Stripe'],
-                ['Date & Time:', pendingApplication.submittedAt || new Date().toLocaleString()]
-            ];
-            
-            paymentDetails.forEach(([label, value]) => {
-                doc.setFont('helvetica', 'bold');
-                doc.text(label, 14, y);
-                doc.setFont('helvetica', 'normal');
-                doc.text(String(value), 65, y);
-                y += 7;
-            });
-            
-            y += 5;
-            
-            // Talent Description
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(1, 0, 0);
-            doc.text('Talent Description', 14, y);
-            y += 8;
-            
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(60, 60, 60);
-            const talentText = (pendingApplication.talent || '').slice(0, 400);
-            const splitTalent = doc.splitTextToSize(talentText || '—', 180);
-            doc.text(splitTalent, 14, y);
-            y += (splitTalent.length * 5) + 10;
-            
-            // Files uploaded
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(1, 0, 0);
-            doc.text('Files Uploaded:', 14, y);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(60, 60, 60);
-            doc.text(`${pendingApplication.files || 0} file(s)`, 65, y);
-            y += 15;
-            
-            // Status Box
-            doc.setFillColor(246, 204, 104);
-            doc.roundedRect(14, y, 182, 25, 3, 3, 'F');
-            
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(1, 0, 0);
-            doc.text('Application Status: PENDING REVIEW', 105, y + 10, { align: 'center' });
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text('You will be notified via email within 3-5 business days.', 105, y + 18, { align: 'center' });
-            
-            // Footer
-            doc.setFontSize(8);
-            doc.setTextColor(120, 120, 120);
-            doc.text('Thank you for applying to SINGHULARS GOT TALENT — GODSPEED', 105, 270, { align: 'center' });
-            doc.text('For queries: singhularsgottalent@gmail.com', 105, 275, { align: 'center' });
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, 280, { align: 'center' });
-
-            // Save file
-            const fileName = `SGT_Receipt_${pendingApplication.paymentId || Date.now()}.pdf`;
-            doc.save(fileName);
-        }
-
-        // ==================== APPLICATION LOADING (ADMIN) ====================
+        // ==================== ADMIN - LOAD APPLICATIONS ====================
         async function loadApplications() {
             const body = document.getElementById('applicationsBody');
             if (!body) return;
 
-            body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem;">Loading applications...</td></tr>`;
+            body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+                Loading applications...
+            </td></tr>`;
 
             try {
                 const sheetApps = await loadFromGoogleSheets();
@@ -3353,7 +3337,10 @@
                 });
 
                 if (allApps.length === 0) {
-                    body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">No applications yet.</td></tr>`;
+                    body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                        No applications yet
+                    </td></tr>`;
                     updateStats([]);
                     return;
                 }
@@ -3373,6 +3360,25 @@
                 // Generate table rows
                 const rows = allApps.map(app => {
                     const statusClass = (app.status || 'Pending').toLowerCase();
+                    const driveUrls = app.driveUrls || [];
+                    const fileNames = app.fileNames || [];
+                    const fileCount = driveUrls.length || app.files || 0;
+                    
+                    // Build file links HTML for the table
+                    let fileLinksHtml = '<span style="color: rgba(255,255,255,0.4);">No files</span>';
+                    if (driveUrls.length > 0) {
+                        fileLinksHtml = `
+                            <div style="max-height: 80px; overflow-y: auto; font-size: 0.8rem;">
+                                ${driveUrls.map((url, i) => {
+                                    const name = fileNames[i] || `File ${i + 1}`;
+                                    const shortName = name.length > 18 ? name.substring(0, 18) + '...' : name;
+                                    return `<a href="${url}" target="_blank" style="display: block; color: #f6cc68; text-decoration: none; padding: 2px 0;" title="${name}">📄 ${shortName}</a>`;
+                                }).join('')}
+                            </div>
+                            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" style="display: inline-block; margin-top: 4px; color: #f6cc68; font-size: 0.75rem; text-decoration: none;">📂 Open Folder</a>` : ''}
+                        `;
+                    }
+                    
                     return `
                         <tr>
                             <td>
@@ -3389,21 +3395,22 @@
                             </td>
                             <td>${app.mobile || '—'}</td>
                             <td>${app.age || '—'}</td>
-                            <td>${app.ageCategory || '—'}</td>
+                            <td><span class="category-badge">${app.ageCategory || '—'}</span></td>
                             <td>${app.talentCategory || '—'}</td>
-                            <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                ${(app.talent || '—').slice(0, 80)}${(app.talent || '').length > 80 ? '...' : ''}
+                            <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(app.talent || '').replace(/"/g, '&quot;')}">
+                                ${(app.talent || '—').slice(0, 50)}${(app.talent || '').length > 50 ? '...' : ''}
                             </td>
-                            <td>
-                                <button class="action-btn action-btn-view" onclick="viewFiles('${app.id}')">
-                                    📁 ${app.files || 0} files
-                                </button>
+                            <td style="min-width: 160px;">
+                                ${fileLinksHtml}
                             </td>
-                            <td>AED ${app.paymentAmount || REGISTRATION_FEE_AED}</td>
+                            <td style="color: #4ade80; font-weight: 600;">AED ${app.paymentAmount || REGISTRATION_FEE_AED}</td>
                             <td><span class="status-badge status-${statusClass}">${app.status || 'Pending'}</span></td>
-                            <td class="action-btns">
-                                <button class="action-btn action-btn-approve" onclick="updateApplicationStatus('${app.id}', 'Approved')">✓</button>
-                                <button class="action-btn action-btn-reject" onclick="updateApplicationStatus('${app.id}', 'Rejected')">✗</button>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${app.id}')" title="View Details">👁️</button>
+                                    <button class="action-btn action-btn-approve" onclick="updateApplicationStatus('${app.id}', 'Approved')" title="Approve">✓</button>
+                                    <button class="action-btn action-btn-reject" onclick="updateApplicationStatus('${app.id}', 'Rejected')" title="Reject">✗</button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -3414,53 +3421,56 @@
 
             } catch (error) {
                 console.error('Error loading applications:', error);
-                body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: #F87171;">Error loading applications. Please refresh.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: #F87171;">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
+                    Error loading applications. Please refresh.
+                </td></tr>`;
             }
         }
 
         function updateStats(apps) {
-            document.getElementById('totalApps').textContent = apps.length;
+            const totalAppsEl = document.getElementById('totalApps');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            
+            if (totalAppsEl) totalAppsEl.textContent = apps.length;
             
             const revenue = apps.reduce((sum, app) => sum + (parseFloat(app.paymentAmount) || 0), 0);
-            document.getElementById('totalRevenue').textContent = revenue.toFixed(0);
+            if (totalRevenueEl) totalRevenueEl.textContent = revenue.toFixed(0);
 
-            const categories = {
-                'Junior': 0,
-                'Teenager': 0,
-                'Elder': 0,
-                'Senior': 0
-            };
-
+            const categories = { 'Junior': 0, 'Teenager': 0, 'Elder': 0, 'Senior': 0 };
             apps.forEach(app => {
                 if (categories.hasOwnProperty(app.ageCategory)) {
                     categories[app.ageCategory]++;
                 }
             });
 
-            document.getElementById('juniorCount').textContent = categories['Junior'];
-            document.getElementById('teenagerCount').textContent = categories['Teenager'];
-            document.getElementById('elderCount').textContent = categories['Elder'];
-            document.getElementById('seniorCount').textContent = categories['Senior'];
+            const juniorEl = document.getElementById('juniorCount');
+            const teenagerEl = document.getElementById('teenagerCount');
+            const elderEl = document.getElementById('elderCount');
+            const seniorEl = document.getElementById('seniorCount');
+
+            if (juniorEl) juniorEl.textContent = categories['Junior'];
+            if (teenagerEl) teenagerEl.textContent = categories['Teenager'];
+            if (elderEl) elderEl.textContent = categories['Elder'];
+            if (seniorEl) seniorEl.textContent = categories['Senior'];
         }
 
         function updateApplicationStatus(id, status) {
-            const idx = sessionData.applications.findIndex(a => String(a.id) === String(id));
-            
-            if (idx === -1) {
+            const app = sessionData.applications.find(a => String(a.id) === String(id));
+            if (!app) {
                 showNotification('error', 'Application not found!');
                 return;
             }
 
-            const app = sessionData.applications[idx];
-            
             if (confirm(`Are you sure you want to mark this application as "${status}"?`)) {
-                sessionData.applications[idx].status = status;
+                // Update locally
+                const idx = sessionData.applications.findIndex(a => String(a.id) === String(id));
+                if (idx !== -1) {
+                    sessionData.applications[idx].status = status;
+                }
                 
                 // Update in Google Sheets
                 updateStatusInGoogleSheets(id, status);
-                
-                // Send email notification
-                sendStatusEmail(app.userEmail || app.email, app.userName || app.name, status);
                 
                 // Reload table
                 loadApplications();
@@ -3469,176 +3479,290 @@
             }
         }
 
-        // ==================== FILE VIEWER ====================
-        function viewFiles(appId) {
+        // ==================== VIEW APPLICATION DETAILS MODAL ====================
+        function viewApplicationDetails(appId) {
             const app = sessionData.applications.find(a => String(a.id) === String(appId));
             if (!app) {
                 showNotification('error', 'Application not found!');
                 return;
             }
 
-            const viewer = document.getElementById('fileViewerContent');
-            viewer.innerHTML = '';
+            currentViewingApp = app;
+            const driveUrls = app.driveUrls || [];
+            const fileNames = app.fileNames || [];
 
-            if (!app.fileData || app.fileData.length === 0) {
-                viewer.innerHTML = '<div style="padding: 3rem; text-align: center; color: rgba(255,255,255,0.6);">No files uploaded</div>';
-                document.getElementById('fileViewerModal').classList.add('active');
+            const modalContent = document.getElementById('applicationDetailContent');
+            if (!modalContent) return;
+            
+            // Build files section
+            let filesHtml = '<p style="color: rgba(255,255,255,0.5);">No files uploaded</p>';
+            if (driveUrls.length > 0) {
+                filesHtml = `
+                    <div style="display: grid; gap: 0.75rem; max-height: 250px; overflow-y: auto;">
+                        ${driveUrls.map((url, i) => {
+                            const name = fileNames[i] || `File ${i + 1}`;
+                            let icon = '📄';
+                            const lowerName = name.toLowerCase();
+                            if (lowerName.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/)) icon = '🖼️';
+                            else if (lowerName.match(/\.(mp4|mov|avi|webm|mkv)$/)) icon = '🎬';
+                            else if (lowerName.match(/\.(mp3|wav|ogg|m4a|flac)$/)) icon = '🎵';
+                            else if (lowerName.match(/\.pdf$/)) icon = '📑';
+                            
+                            return `
+                                <div style="background: rgba(8,4,4,0.6); border: 1px solid rgba(246,204,104,0.3); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 200px;">
+                                        <span style="font-size: 1.5rem;">${icon}</span>
+                                        <span style="color: #fff; word-break: break-all;">${name}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="${url}" target="_blank" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">👁️ View</a>
+                                        <a href="${url.replace('/view?usp=sharing', '/view').replace('/view', '/uc?export=download')}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">⬇️ Download</a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    ${app.folderUrl ? `
+                        <a href="${app.folderUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem; width: 100%; text-align: center;">
+                            📂 Open All Files in Google Drive
+                        </a>
+                    ` : ''}
+                `;
+            }
+
+            modalContent.innerHTML = `
+                <div style="display: grid; gap: 1.5rem;">
+                    <!-- Applicant Header -->
+                    <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(246,204,104,0.2); flex-wrap: wrap;">
+                        ${app.userPhoto 
+                            ? `<img src="${app.userPhoto}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(246,204,104,0.3);">` 
+                            : `<div style="width: 60px; height: 60px; border-radius: 12px; background: linear-gradient(45deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #010000;">${((app.userName || app.name || 'U').charAt(0)).toUpperCase()}</div>`
+                        }
+                        <div style="flex: 1; min-width: 200px;">
+                            <h3 style="margin: 0; font-size: 1.25rem; color: #fff;">${app.userName || app.name || '—'}</h3>
+                            <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6); font-size: 0.9rem;">${app.userEmail || app.email || '—'}</p>
+                        </div>
+                        <span class="status-badge status-${(app.status || 'pending').toLowerCase()}">${app.status || 'Pending'}</span>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Mobile</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.mobile || '—'}</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Date of Birth</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.dob || '—'}</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Age</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.age || '—'} years</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Age Category</label>
+                            <p style="margin: 0.25rem 0 0;"><span class="category-badge">${app.ageCategory || '—'}</span></p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Talent Category</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.talentCategory || '—'}</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Sub-Category</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.talentSubCategory || '—'}</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Payment</label>
+                            <p style="margin: 0.25rem 0 0; color: #4ade80; font-size: 0.95rem; font-weight: 600;">AED ${app.paymentAmount || 55} ✓</p>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Files</label>
+                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${driveUrls.length} uploaded</p>
+                        </div>
+                    </div>
+
+                    <!-- Talent Description -->
+                    <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                        <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Talent Description</label>
+                        <p style="margin: 0.5rem 0 0; color: #fff; line-height: 1.6; max-height: 150px; overflow-y: auto; white-space: pre-wrap;">${app.talent || '—'}</p>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
+                        <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Payment ID</label>
+                        <p style="margin: 0.25rem 0 0; color: #fff; font-family: monospace; font-size: 0.9rem;">${app.paymentId || '—'}</p>
+                    </div>
+
+                    <!-- Uploaded Files -->
+                    <div>
+                        <label style="font-size: 0.85rem; color: #f6cc68; text-transform: uppercase; display: block; margin-bottom: 0.75rem; letter-spacing: 0.5px;">
+                            📁 Uploaded Files (${driveUrls.length})
+                        </label>
+                        ${filesHtml}
+                    </div>
+
+                    <!-- Submitted At -->
+                    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid rgba(246,204,104,0.2); color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+                        📅 Submitted: ${app.submittedAt || '—'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('applicationDetailModal').classList.add('active');
+        }
+
+        function closeApplicationDetailModal() {
+            document.getElementById('applicationDetailModal').classList.remove('active');
+            currentViewingApp = null;
+        }
+
+        // ==================== RECEIPT GENERATION ====================
+        function generateReceipt() {
+            if (!pendingApplication) {
+                showNotification('error', 'No application data found!');
                 return;
             }
 
-            // Create file tabs if multiple files
-            if (app.fileData.length > 1) {
-                const tabsContainer = document.createElement('div');
-                tabsContainer.className = 'file-tabs';
-                tabsContainer.id = 'fileTabs';
-                tabsContainer.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;';
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header - Golden color #f6cc68
+            doc.setFillColor(246, 204, 104);
+            doc.rect(0, 0, 210, 50, 'F');
+            
+            // Dark accent line
+            doc.setFillColor(1, 0, 0);
+            doc.rect(0, 46, 210, 4, 'F');
+            
+            // Logo/Title
+            doc.setFontSize(28);
+            doc.setTextColor(1, 0, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text('GODSPEED', 105, 22, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.text('SINGHULARS GOT TALENT - RECEIPT', 105, 35, { align: 'center' });
+            
+            // Content
+            let y = 65;
+            
+            doc.setTextColor(1, 0, 0);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Payment Receipt', 14, y);
+            
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`#${pendingApplication.paymentId}`, 196, y, { align: 'right' });
+            
+            y += 12;
+            doc.setDrawColor(246, 204, 104);
+            doc.setLineWidth(0.5);
+            doc.line(14, y, 196, y);
+            y += 10;
+            
+            // Details
+            doc.setFontSize(10);
+            doc.setTextColor(60, 60, 60);
+            
+            const details = [
+                ['Full Name:', pendingApplication.userName || pendingApplication.name],
+                ['Email:', pendingApplication.userEmail || pendingApplication.email],
+                ['Mobile:', pendingApplication.mobile || '—'],
+                ['Date of Birth:', pendingApplication.dob || '—'],
+                ['Age:', `${pendingApplication.age || '—'} years (${pendingApplication.ageCategory || '—'})`],
+                ['Talent Category:', pendingApplication.talentCategory || '—'],
+                ['Sub-Category:', pendingApplication.talentSubCategory || '—'],
+                ['Payment Amount:', `AED ${pendingApplication.paymentAmount || REGISTRATION_FEE_AED}`],
+                ['Payment Status:', 'PAID ✓'],
+                ['Submitted:', pendingApplication.submittedAt || '—']
+            ];
+            
+            details.forEach(([label, value]) => {
+                doc.setFont('helvetica', 'bold');
+                doc.text(label, 14, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(String(value), 65, y);
+                y += 8;
+            });
+            
+            // Drive URLs section
+            if (pendingApplication.driveUrls && pendingApplication.driveUrls.length > 0) {
+                y += 5;
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(1, 0, 0);
+                doc.text('Uploaded Files:', 14, y);
+                y += 7;
                 
-                app.fileData.forEach((_, idx) => {
-                    const tab = document.createElement('button');
-                    tab.className = 'btn btn-ghost';
-                    tab.style.cssText = idx === 0 ? 'background: rgba(246, 204, 104, 0.3); border-color: #f6cc68;' : '';
-                    tab.textContent = app.fileNames[idx] || `File ${idx + 1}`;
-                    tab.onclick = () => showFilePreview(app, idx);
-                    tabsContainer.appendChild(tab);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(60, 60, 60);
+                pendingApplication.driveUrls.forEach((url, i) => {
+                    const name = (pendingApplication.fileNames && pendingApplication.fileNames[i]) || `File ${i + 1}`;
+                    doc.text(`• ${name}`, 14, y);
+                    y += 5;
                 });
                 
-                viewer.appendChild(tabsContainer);
+                if (pendingApplication.folderUrl) {
+                    y += 3;
+                    doc.setTextColor(100, 100, 100);
+                    doc.setFontSize(8);
+                    doc.text('Files stored in Google Drive', 14, y);
+                }
             }
+            
+            y += 15;
+            
+            // Status Box
+            doc.setFillColor(246, 204, 104);
+            doc.roundedRect(14, y, 182, 22, 3, 3, 'F');
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(1, 0, 0);
+            doc.text('Application Status: PENDING REVIEW', 105, y + 9, { align: 'center' });
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text('You will be notified via email within 3-5 business days.', 105, y + 16, { align: 'center' });
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(120, 120, 120);
+            doc.text('Thank you for applying to SINGHULARS GOT TALENT — GODSPEED', 105, 275, { align: 'center' });
+            doc.text('For queries: singhularsgottalent@gmail.com', 105, 280, { align: 'center' });
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 285, { align: 'center' });
 
-            // File preview container
-            const previewContainer = document.createElement('div');
-            previewContainer.id = 'filePreviewContainer';
-            previewContainer.style.cssText = 'background: rgba(8,4,4,0.5); border-radius: 16px; min-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;';
-            viewer.appendChild(previewContainer);
-
-            // Show first file
-            showFilePreview(app, 0);
-
-            currentViewingFile = { app, index: 0 };
-            document.getElementById('fileViewerModal').classList.add('active');
-        }
-
-        function showFilePreview(app, index) {
-            const container = document.getElementById('filePreviewContainer');
-            if (!container) return;
-
-            container.innerHTML = '';
-
-            const fileData = app.fileData[index];
-            const fileType = app.fileTypes[index] || '';
-            const fileName = app.fileNames[index] || 'File';
-
-            currentViewingFile = { app, index };
-
-            // Update tab styling
-            const tabsContainer = document.getElementById('fileTabs');
-            if (tabsContainer) {
-                Array.from(tabsContainer.children).forEach((tab, i) => {
-                    tab.style.background = i === index ? 'rgba(246, 204, 104, 0.3)' : '';
-                    tab.style.borderColor = i === index ? '#f6cc68' : '';
-                });
-            }
-
-            if (fileType.includes('image')) {
-                const img = document.createElement('img');
-                img.src = fileData;
-                img.style.cssText = 'max-width: 100%; max-height: 500px; border-radius: 12px;';
-                img.alt = fileName;
-                container.appendChild(img);
-            } else if (fileType.includes('video') || fileType.includes('mp4')) {
-                const video = document.createElement('video');
-                video.src = fileData;
-                video.controls = true;
-                video.style.cssText = 'max-width: 100%; max-height: 500px; border-radius: 12px;';
-                container.appendChild(video);
-            } else if (fileType.includes('audio') || fileType.includes('mp3')) {
-                const audioContainer = document.createElement('div');
-                audioContainer.style.cssText = 'text-align: center; padding: 3rem;';
-                audioContainer.innerHTML = `
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎵</div>
-                    <div style="margin-bottom: 1rem; font-weight: 600; color: #f6cc68;">${fileName}</div>
-                    <audio controls src="${fileData}" style="width: 100%; max-width: 400px;"></audio>
-                `;
-                container.appendChild(audioContainer);
-            } else if (fileType.includes('pdf')) {
-                const pdfContainer = document.createElement('div');
-                pdfContainer.style.cssText = 'text-align: center; padding: 3rem;';
-                pdfContainer.innerHTML = `
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
-                    <div style="margin-bottom: 1rem; font-weight: 600; color: #f6cc68;">${fileName}</div>
-                    <p style="color: rgba(255,255,255,0.6); margin-bottom: 1rem;">PDF preview not available</p>
-                    <button onclick="downloadCurrentFile()" class="btn btn-primary">⬇️ Download PDF</button>
-                `;
-                container.appendChild(pdfContainer);
-            } else {
-                const unknownContainer = document.createElement('div');
-                unknownContainer.style.cssText = 'text-align: center; padding: 3rem;';
-                unknownContainer.innerHTML = `
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">📁</div>
-                    <div style="margin-bottom: 1rem; font-weight: 600; color: #f6cc68;">${fileName}</div>
-                    <p style="color: rgba(255,255,255,0.6);">Preview not available for this file type</p>
-                    <button onclick="downloadCurrentFile()" class="btn btn-primary" style="margin-top: 1rem;">⬇️ Download File</button>
-                `;
-                container.appendChild(unknownContainer);
-            }
-        }
-
-        function closeFileViewer() {
-            document.getElementById('fileViewerModal').classList.remove('active');
-            currentViewingFile = null;
-        }
-
-        function downloadCurrentFile() {
-            if (!currentViewingFile) return;
-
-            const { app, index } = currentViewingFile;
-            const fileData = app.fileData[index];
-            const fileName = app.fileNames[index] || `file_${index + 1}`;
-
-            const link = document.createElement('a');
-            link.href = fileData;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function downloadFile() {
-            downloadCurrentFile();
+            // Save
+            const fileName = `SGT_Receipt_${pendingApplication.paymentId || Date.now()}.pdf`;
+            doc.save(fileName);
+            
+            showNotification('success', 'Receipt downloaded!');
         }
 
         // ==================== NOTIFICATION SYSTEM ====================
         function showNotification(type, message) {
-            // Remove existing notifications
+            // Remove existing
             const existing = document.querySelector('.notification');
-            if (existing) {
-                existing.remove();
-            }
+            if (existing) existing.remove();
 
             const notification = document.createElement('div');
             notification.className = 'notification';
             
-            const bgColor = {
-                'success': 'rgba(34, 197, 94, 0.9)',
-                'error': 'rgba(239, 68, 68, 0.9)',
-                'warning': 'rgba(246, 204, 104, 0.9)',
-                'info': 'rgba(59, 130, 246, 0.9)'
-            }[type] || 'rgba(156, 150, 119, 0.9)';
-
-            const textColor = type === 'warning' ? '#010000' : '#FFFFFF';
-
-            const icon = {
-                'success': '✓',
-                'error': '✗',
-                'warning': '⚠',
-                'info': 'ℹ'
-            }[type] || 'ℹ';
+            const bgColors = {
+                'success': 'rgba(34, 197, 94, 0.95)',
+                'error': 'rgba(239, 68, 68, 0.95)',
+                'warning': 'rgba(246, 204, 104, 0.95)',
+                'info': 'rgba(59, 130, 246, 0.95)'
+            };
+            
+            const textColor = type === 'warning' ? '#010000' : '#fff';
+            const icons = { 'success': '✓', 'error': '✗', 'warning': '⚠', 'info': 'ℹ' };
 
             notification.style.cssText = `
                 position: fixed;
                 top: 100px;
                 right: 20px;
-                background: ${bgColor};
+                background: ${bgColors[type] || bgColors.info};
                 color: ${textColor};
                 padding: 1rem 1.5rem;
                 border-radius: 12px;
@@ -3649,36 +3773,21 @@
                 gap: 0.75rem;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.3);
                 animation: slideIn 0.3s ease;
-                max-width: 400px;
+                max-width: 380px;
+                font-family: 'Outfit', sans-serif;
             `;
 
             notification.innerHTML = `
-                <span style="font-size: 1.25rem;">${icon}</span>
+                <span style="font-size: 1.25rem;">${icons[type] || 'ℹ'}</span>
                 <span>${message}</span>
             `;
 
-            // Add animation styles
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-
             document.body.appendChild(notification);
 
-            // Auto remove after 4 seconds
+            // Auto remove
             setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
+                setTimeout(() => notification.remove(), 300);
             }, 4000);
         }
 
@@ -3703,10 +3812,6 @@
             }
         }
 
-        function formatCurrency(amount, currency = 'AED') {
-            return `${currency} ${parseFloat(amount).toFixed(2)}`;
-        }
-
         // ==================== EXPORT FUNCTIONS (ADMIN) ====================
         function exportToCSV() {
             if (sessionData.applications.length === 0) {
@@ -3717,7 +3822,7 @@
             const headers = [
                 'ID', 'Name', 'Email', 'Mobile', 'DOB', 'Age', 'Age Category',
                 'Talent Category', 'Sub-Category', 'Talent Description',
-                'Files', 'Payment ID', 'Amount', 'Status', 'Submitted At'
+                'Files', 'Drive Folder', 'Payment ID', 'Amount', 'Status', 'Submitted At'
             ];
 
             const rows = sessionData.applications.map(app => [
@@ -3730,8 +3835,9 @@
                 app.ageCategory,
                 app.talentCategory,
                 app.talentSubCategory,
-                `"${(app.talent || '').replace(/"/g, '""')}"`,
-                app.files,
+                `"${(app.talent || '').replace(/"/g, '""').substring(0, 500)}"`,
+                (app.driveUrls || []).length,
+                app.folderUrl || '',
                 app.paymentId,
                 app.paymentAmount,
                 app.status,
@@ -3749,23 +3855,16 @@
             link.download = `SGT_Applications_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
 
-            showNotification('success', 'Applications exported successfully!');
+            showNotification('success', 'Applications exported to CSV!');
         }
 
-        // ==================== KEYBOARD SHORTCUTS ====================
-        document.addEventListener('keydown', function(e) {
-            // ESC to close modals
-            if (e.key === 'Escape') {
-                closeAdminLogin();
-                closeSuccessModal();
-                closeFileViewer();
-            }
-        });
-
-        // ==================== INITIALIZE ON DOM READY ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Singhulars Got Talent - GODSPEED Initialized');
-        });
+        // ==================== CONSOLE INITIALIZATION ====================
+        console.log('🚀 Singhulars Got Talent - GODSPEED');
+        console.log('📋 Version: 2.0');
+        console.log('💾 Google Sheets URL:', GOOGLE_SHEETS_URL);
     </script>
     </body>
 </html>
+
+
+
