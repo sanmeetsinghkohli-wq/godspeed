@@ -1133,7 +1133,8 @@
             background: rgba(26, 26, 26, 0.8);
             border: 1px solid rgba(246, 204, 104, 0.2);
             border-radius: 20px;
-            overflow: hidden;
+            overflow: auto;
+            max-height: 70vh;
         }
 
         .data-table {
@@ -2286,7 +2287,8 @@
         </div>
     </div>
     <script> 
-                          // ==================== CONFIGURATION ====================
+    
+               // ==================== CONFIGURATION ====================
         const GOOGLE_CLIENT_ID = '510466997628-85povrl38c2ccinvgb7op6993q3514s3.apps.googleusercontent.com';
         const EMAILJS_PUBLIC_KEY = 'YZpoRY4fYkni2gA6H';
         const EMAILJS_SERVICE_ID = 'service_gjyxfni';
@@ -2296,7 +2298,7 @@
         const REGISTRATION_FEE_AED = 55;
         const CURRENCY = 'AED';
         
-        // ⚠️ REPLACE THIS WITH YOUR DEPLOYED WEB APP URL
+        // Your Google Apps Script URL
         const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxkBaiYSQSZ13Y9jw648rAmpQqdlQVfDReyKCESFWwHkvK53Qb9iC0xhIn2PTCrL4cjFw/exec';
 
         // Initialize EmailJS
@@ -2304,6 +2306,16 @@
 
         // Initialize Stripe
         const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        // ==================== HELPER FUNCTIONS ====================
+function safeString(value) {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value;
+    if (Array.isArray(value)) return value.join(", ");
+    if (typeof value === "object") {
+        return value.name || value.description || value.text || JSON.stringify(value);
+    }
+    return String(value);
+}
 
         // ==================== STATE MANAGEMENT ====================
         let currentUser = null;
@@ -2386,29 +2398,35 @@
 
         // ==================== INITIALIZATION ====================
         window.onload = function() {
+            console.log('🚀 Initializing Singhulars Got Talent...');
+            
             // Initialize Google Sign-In
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleSignIn,
-                auto_select: false,
-                cancel_on_tap_outside: true
-            });
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleSignIn,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
 
-            google.accounts.id.renderButton(
-                document.getElementById("googleSignInButton"),
-                {
-                    theme: "filled_blue",
-                    size: "large",
-                    width: 350,
-                    text: "continue_with",
-                    shape: "rectangular"
+                const googleBtnContainer = document.getElementById("googleSignInButton");
+                if (googleBtnContainer) {
+                    google.accounts.id.renderButton(googleBtnContainer, {
+                        theme: "filled_blue",
+                        size: "large",
+                        width: 350,
+                        text: "continue_with",
+                        shape: "rectangular"
+                    });
                 }
-            );
+            }
 
             initEventListeners();
             populateCountryCodes();
             populateTalentCategories();
             addAnimationStyles();
+            
+            console.log('✅ Initialization complete');
         };
 
         function initEventListeners() {
@@ -2416,15 +2434,11 @@
             window.addEventListener('scroll', () => {
                 const navbar = document.getElementById('navbar');
                 if (navbar) {
-                    if (window.scrollY > 50) {
-                        navbar.classList.add('scrolled');
-                    } else {
-                        navbar.classList.remove('scrolled');
-                    }
+                    navbar.classList.toggle('scrolled', window.scrollY > 50);
                 }
             });
 
-            // Character counter for talent description
+            // Character counter
             const textarea = document.getElementById('talentDescription');
             const charCount = document.getElementById('charCount');
             if (textarea && charCount) {
@@ -2433,7 +2447,7 @@
                 });
             }
 
-            // File input change handler
+            // File input
             const fileInput = document.getElementById('fileUpload');
             if (fileInput) {
                 fileInput.addEventListener('change', handleFileSelect);
@@ -2445,7 +2459,7 @@
                 form.addEventListener('submit', handleFormSubmit);
             }
 
-            // Talent category change - update subcategories
+            // Talent category change
             const categorySelect = document.getElementById('talentCategory');
             if (categorySelect) {
                 categorySelect.addEventListener('change', updateSubCategories);
@@ -2455,31 +2469,28 @@
             const adminPasswordInput = document.getElementById('adminPassword');
             if (adminPasswordInput) {
                 adminPasswordInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        verifyAdminPassword();
-                    }
+                    if (e.key === 'Enter') verifyAdminPassword();
                 });
             }
 
-            // Close modals on Escape key
+            // Close modals on Escape
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeAllModals();
-                }
+                if (e.key === 'Escape') closeAllModals();
             });
 
             // Close modals on backdrop click
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.remove('active');
-                    }
+                    if (e.target === this) this.classList.remove('active');
                 });
             });
         }
 
         function addAnimationStyles() {
+            if (document.getElementById('dynamicStyles')) return;
+            
             const style = document.createElement('style');
+            style.id = 'dynamicStyles';
             style.textContent = `
                 @keyframes slideIn {
                     from { transform: translateX(100%); opacity: 0; }
@@ -2489,13 +2500,23 @@
                     from { transform: translateX(0); opacity: 1; }
                     to { transform: translateX(100%); opacity: 0; }
                 }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                }
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
                 }
-                @keyframes scaleIn {
-                    from { transform: scale(0.9); opacity: 0; }
-                    to { transform: scale(1); opacity: 1; }
+                .loading-spinner {
+                    animation: spin 1s linear infinite;
+                }
+                .pulse-animation {
+                    animation: pulse 0.5s ease;
                 }
             `;
             document.head.appendChild(style);
@@ -2514,10 +2535,7 @@
 
             select.innerHTML = '<option value="">Select Country</option>';
             countryCodes.forEach(cc => {
-                const option = document.createElement('option');
-                option.value = cc.code;
-                option.textContent = `${cc.flag} ${cc.country} (${cc.code})`;
-                select.appendChild(option);
+                select.innerHTML += `<option value="${cc.code}">${cc.flag} ${cc.country} (${cc.code})</option>`;
             });
         }
 
@@ -2527,17 +2545,13 @@
 
             select.innerHTML = '<option value="">Select Talent Category</option>';
             Object.keys(talentCategories).forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                select.appendChild(option);
+                select.innerHTML += `<option value="${category}">${category}</option>`;
             });
         }
 
         function updateSubCategories() {
             const categorySelect = document.getElementById('talentCategory');
             const subCategorySelect = document.getElementById('talentSubCategory');
-            
             if (!categorySelect || !subCategorySelect) return;
 
             const selectedCategory = categorySelect.value;
@@ -2545,10 +2559,7 @@
 
             if (selectedCategory && talentCategories[selectedCategory]) {
                 talentCategories[selectedCategory].forEach(sub => {
-                    const option = document.createElement('option');
-                    option.value = sub;
-                    option.textContent = sub;
-                    subCategorySelect.appendChild(option);
+                    subCategorySelect.innerHTML += `<option value="${sub}">${sub}</option>`;
                 });
                 subCategorySelect.disabled = false;
             } else {
@@ -2590,20 +2601,18 @@
                 ageDisplay.innerHTML = `
                     <div class="age-warning">
                         <span>⚠️</span>
-                        <span>Minimum age requirement is 5 years. You are not eligible to participate.</span>
-                    </div>
-                `;
+                        <span>Minimum age is 5 years. You are not eligible.</span>
+                    </div>`;
                 if (submitBtn) submitBtn.disabled = true;
                 return null;
-            } else {
-                ageDisplay.innerHTML = `
-                    <div class="age-badge">
-                        <span class="age-value">${age} years</span>
-                        <span class="category-badge">${category}</span>
-                    </div>
-                `;
-                if (submitBtn) submitBtn.disabled = false;
             }
+
+            ageDisplay.innerHTML = `
+                <div class="age-badge">
+                    <span class="age-value">${age} years</span>
+                    <span class="category-badge">${category}</span>
+                </div>`;
+            if (submitBtn) submitBtn.disabled = false;
 
             return { age, category };
         }
@@ -2618,118 +2627,71 @@
 
             if (files.length > 0) {
                 let totalSize = 0;
-                let filesHtml = '';
-                let hasOversizedFile = false;
+                let html = '';
                 
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
                     const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
                     totalSize += file.size;
                     
-                    if (file.size > 50 * 1024 * 1024) {
-                        hasOversizedFile = true;
-                        filesHtml += `
-                            <div class="file-item" style="border: 1px solid rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1);">
-                                <span class="file-item-name">❌ ${file.name}</span>
-                                <span class="file-item-size" style="color: #F87171;">${sizeMB} MB (Too large!)</span>
-                            </div>
-                        `;
-                    } else {
-                        filesHtml += `
-                            <div class="file-item">
-                                <span class="file-item-name">✅ ${file.name}</span>
-                                <span class="file-item-size">${sizeMB} MB</span>
-                            </div>
-                        `;
-                    }
+                    const icon = getFileIcon(file.name);
+                    const isOversized = file.size > 50 * 1024 * 1024;
+                    
+                    html += `
+                        <div class="file-item" style="${isOversized ? 'border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.1);' : ''}">
+                            <span class="file-item-name">${icon} ${file.name}</span>
+                            <span class="file-item-size" style="${isOversized ? 'color: #F87171;' : ''}">${sizeMB} MB ${isOversized ? '❌' : '✅'}</span>
+                        </div>`;
                 }
                 
-                filesList.innerHTML = filesHtml;
-                
-                const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-                fileSize.textContent = `Total: ${totalSizeMB} MB (${files.length} file${files.length > 1 ? 's' : ''})`;
-                
-                if (hasOversizedFile) {
-                    showNotification('warning', 'Some files exceed 50MB limit!');
-                }
+                filesList.innerHTML = html;
+                fileSize.textContent = `Total: ${(totalSize / (1024 * 1024)).toFixed(2)} MB (${files.length} file${files.length > 1 ? 's' : ''})`;
             } else {
                 filesList.innerHTML = '';
                 fileSize.textContent = '';
             }
         }
 
-        // ==================== GOOGLE SHEETS & DRIVE FUNCTIONS ====================
+        function getFileIcon(filename) {
+            const ext = filename.toLowerCase();
+            if (ext.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/)) return '🖼️';
+            if (ext.match(/\.(mp4|mov|avi|webm|mkv)$/)) return '🎬';
+            if (ext.match(/\.(mp3|wav|ogg|m4a|flac)$/)) return '🎵';
+            if (ext.match(/\.pdf$/)) return '📑';
+            return '📄';
+        }
+
+        // ==================== GOOGLE SHEETS FUNCTIONS ====================
         async function saveToGoogleSheets(data) {
             try {
-                console.log('📤 Uploading files to Google Drive...');
-                
-                const submitBtn = document.getElementById('submitBtn');
-                if (submitBtn) {
-                    submitBtn.innerHTML = '⏳ Uploading to Google Drive...';
-                }
-                
-                const applicationData = {
-                    action: 'saveApplication',
-                    data: {
-                        id: data.id,
-                        userId: data.userId,
-                        userEmail: data.userEmail,
-                        userName: data.userName,
-                        userPhoto: data.userPhoto,
-                        name: data.name,
-                        email: data.email,
-                        countryCode: data.countryCode,
-                        mobile: data.mobile,
-                        dob: data.dob,
-                        age: data.age,
-                        ageCategory: data.ageCategory,
-                        talentCategory: data.talentCategory,
-                        talentSubCategory: data.talentSubCategory,
-                        talent: data.talent,
-                        files: data.files,
-                        fileNames: data.fileNames,
-                        fileTypes: data.fileTypes,
-                        fileData: data.fileData, // Base64 - will be uploaded to Drive
-                        paymentId: data.paymentId,
-                        paymentAmount: data.paymentAmount,
-                        paymentCurrency: data.paymentCurrency,
-                        paymentStatus: data.paymentStatus,
-                        status: data.status,
-                        submittedAt: data.submittedAt
-                    }
-                };
-                
-                console.log('Sending to Apps Script:', data.fileNames);
+                console.log('📤 Saving to Google Sheets & Drive...');
                 
                 const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify(applicationData)
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'saveApplication',
+                        data: data
+                    })
                 });
                 
                 let result;
                 try {
                     result = await response.json();
                 } catch (e) {
-                    console.log('Response received (non-JSON)');
                     result = { success: true };
                 }
                 
                 if (result.success) {
-                    console.log('✅ Application saved successfully!');
+                    console.log('✅ Saved successfully!');
                     console.log('📁 Drive URLs:', result.driveUrls);
-                    console.log('📂 Folder URL:', result.folderUrl);
-                    
                     data.driveUrls = result.driveUrls || [];
                     data.folderUrl = result.folderUrl || '';
                 }
                 
                 return result;
-                
             } catch (error) {
-                console.error('❌ Error saving:', error);
+                console.error('❌ Save error:', error);
                 return { success: false, error: error.message };
             }
         }
@@ -2738,38 +2700,40 @@
             try {
                 console.log('📥 Loading applications...');
                 
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getApplications`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    }
-                });
+                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getApplications`);
+                const text = await response.text();
                 
-                const result = await response.json();
+                console.log('📄 Raw response length:', text.length);
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    throw new Error('Invalid response from server');
+                }
                 
                 if (result.success && result.applications) {
                     console.log('✅ Loaded', result.applications.length, 'applications');
                     return result.applications;
-                } else {
-                    console.warn('⚠️ No applications found');
-                    return [];
+                } else if (result.error) {
+                    throw new Error(result.error);
                 }
                 
+                return [];
             } catch (error) {
-                console.error('❌ Error loading:', error);
-                return sessionData.applications || [];
+                console.error('❌ Load error:', error);
+                throw error;
             }
         }
 
         async function updateStatusInGoogleSheets(id, status) {
             try {
-                console.log('📤 Updating status:', id, '->', status);
+                console.log(`📤 Updating status: ${id} → ${status}`);
                 
                 const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({
                         action: 'updateStatus',
                         id: String(id),
@@ -2784,47 +2748,25 @@
                     result = { success: true };
                 }
                 
-                if (result.success) {
-                    console.log('✅ Status updated');
-                }
-                
+                console.log('📥 Update result:', result);
                 return result;
-                
             } catch (error) {
-                console.error('❌ Error updating status:', error);
+                console.error('❌ Update error:', error);
                 return { success: false, error: error.message };
             }
         }
 
-        async function getStatsFromGoogleSheets() {
-            try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getStats`);
-                const result = await response.json();
-                
-                if (result.success && result.stats) {
-                    return result.stats;
-                }
-                return null;
-                
-            } catch (error) {
-                console.error('❌ Error getting stats:', error);
-                return null;
-            }
-        }
-
-        // ==================== GOOGLE SIGN-IN ====================
+        // ==================== AUTH FUNCTIONS ====================
         function handleGoogleSignIn(response) {
             const credential = parseJwt(response.credential);
-            
             if (!credential) {
-                showNotification('error', 'Failed to sign in with Google');
+                showNotification('error', 'Failed to sign in');
                 return;
             }
 
-            let localUser = sessionData.users.find(u => u.email === credential.email);
-            
-            if (!localUser) {
-                localUser = {
+            let user = sessionData.users.find(u => u.email === credential.email);
+            if (!user) {
+                user = {
                     id: Date.now(),
                     googleId: credential.sub,
                     name: credential.name,
@@ -2834,10 +2776,10 @@
                     authProvider: 'google',
                     createdAt: new Date().toISOString()
                 };
-                sessionData.users.push(localUser);
+                sessionData.users.push(user);
             }
             
-            currentUser = localUser;
+            currentUser = user;
             currentRole = 'user';
             updateAuthButton();
             backToPublicPage();
@@ -2848,17 +2790,14 @@
             try {
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                return JSON.parse(decodeURIComponent(atob(base64).split('').map(c =>
                     '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-                ).join(''));
-                return JSON.parse(jsonPayload);
+                ).join('')));
             } catch (e) {
-                console.error('JWT parse error:', e);
                 return null;
             }
         }
 
-        // ==================== AUTH FUNCTIONS ====================
         function updateAuthButton() {
             const navActions = document.getElementById('navActions');
             if (!navActions) return;
@@ -2866,11 +2805,9 @@
             if (currentUser) {
                 navActions.innerHTML = `
                     <div class="user-profile-btn">
-                        ${currentUser.photoURL ?
-                            `<img src="${currentUser.photoURL}" class="user-profile-avatar" alt="${currentUser.name}">` :
-                            `<div class="user-profile-avatar" style="background: linear-gradient(45deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #010000;">
-                                ${currentUser.name.charAt(0).toUpperCase()}
-                            </div>`
+                        ${currentUser.photoURL 
+                            ? `<img src="${currentUser.photoURL}" class="user-profile-avatar" alt="${currentUser.name}">`
+                            : `<div class="user-profile-avatar" style="background: linear-gradient(45deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #010000;">${currentUser.name.charAt(0).toUpperCase()}</div>`
                         }
                         <span class="user-profile-name">${currentUser.name.split(' ')[0]}</span>
                     </div>
@@ -2879,17 +2816,9 @@
                 `;
             } else {
                 navActions.innerHTML = `
-                    <button onclick="showUserLoginPage()" class="btn btn-secondary" id="authBtn">Sign In</button>
+                    <button onclick="showUserLoginPage()" class="btn btn-secondary">Sign In</button>
                     <button onclick="showAdminLogin()" class="btn btn-ghost">Admin</button>
                 `;
-            }
-        }
-
-        function handleAuthButton() {
-            if (currentUser) {
-                logout();
-            } else {
-                showUserLoginPage();
             }
         }
 
@@ -2901,13 +2830,11 @@
                 return;
             }
 
-            // Check if user already applied
-            const existingApp = sessionData.applications.find(app => 
+            const existing = sessionData.applications.find(app => 
                 app.userEmail === currentUser.email || app.email === currentUser.email
             );
-            
-            if (existingApp) {
-                showNotification('warning', `You have already applied!\nStatus: ${existingApp.status}`);
+            if (existing) {
+                showNotification('warning', `Already applied! Status: ${existing.status}`);
                 return;
             }
 
@@ -2915,54 +2842,58 @@
         }
 
         function showUserLoginPage() {
-            document.getElementById('publicPage').classList.add('hidden');
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('userLoginPage').classList.remove('hidden');
-            document.getElementById('userLoginPage').style.display = 'flex';
+            document.getElementById('publicPage')?.classList.add('hidden');
+            document.getElementById('adminDashboard')?.classList.add('hidden');
+            const loginPage = document.getElementById('userLoginPage');
+            if (loginPage) {
+                loginPage.classList.remove('hidden');
+                loginPage.style.display = 'flex';
+            }
         }
 
         function backToPublicPage() {
-            document.getElementById('userLoginPage').classList.add('hidden');
-            document.getElementById('userLoginPage').style.display = 'none';
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('publicPage').classList.remove('hidden');
+            const loginPage = document.getElementById('userLoginPage');
+            if (loginPage) {
+                loginPage.classList.add('hidden');
+                loginPage.style.display = 'none';
+            }
+            document.getElementById('adminDashboard')?.classList.add('hidden');
+            document.getElementById('publicPage')?.classList.remove('hidden');
         }
 
         function showApplicationForm() {
             const emailInput = document.getElementById('email');
             const nameInput = document.getElementById('fullName');
-            
             if (emailInput) emailInput.value = currentUser.email;
             if (nameInput) nameInput.value = currentUser.name;
             
-            document.getElementById('applicationSection').classList.remove('hidden');
-            document.getElementById('applicationSection').scrollIntoView({ behavior: 'smooth' });
+            const section = document.getElementById('applicationSection');
+            if (section) {
+                section.classList.remove('hidden');
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function hideApplicationForm() {
-            document.getElementById('applicationSection').classList.add('hidden');
+            document.getElementById('applicationSection')?.classList.add('hidden');
+            document.getElementById('talentForm')?.reset();
             
-            // Reset form
-            const form = document.getElementById('talentForm');
-            if (form) form.reset();
+            const elements = {
+                charCount: '0',
+                fileSize: '',
+                ageDisplay: '',
+                filesList: ''
+            };
             
-            const charCount = document.getElementById('charCount');
-            if (charCount) charCount.textContent = '0';
+            Object.entries(elements).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent !== undefined ? el.textContent = value : el.innerHTML = value;
+            });
             
-            const fileSize = document.getElementById('fileSize');
-            if (fileSize) fileSize.textContent = '';
-            
-            const ageDisplay = document.getElementById('ageDisplay');
-            if (ageDisplay) ageDisplay.innerHTML = '';
-            
-            const filesList = document.getElementById('filesList');
-            if (filesList) filesList.innerHTML = '';
-            
-            // Reset subcategory
-            const subCategorySelect = document.getElementById('talentSubCategory');
-            if (subCategorySelect) {
-                subCategorySelect.innerHTML = '<option value="">Select Sub-Category</option>';
-                subCategorySelect.disabled = true;
+            const subCat = document.getElementById('talentSubCategory');
+            if (subCat) {
+                subCat.innerHTML = '<option value="">Select Sub-Category</option>';
+                subCat.disabled = true;
             }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2970,33 +2901,33 @@
 
         // ==================== EMAIL/PASSWORD AUTH ====================
         function toggleToRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginForm')?.classList.add('hidden');
+            document.getElementById('registerForm')?.classList.remove('hidden');
         }
 
         function toggleToLogin() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm')?.classList.add('hidden');
+            document.getElementById('loginForm')?.classList.remove('hidden');
         }
 
         function registerUser() {
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const name = document.getElementById('registerName')?.value.trim();
+            const email = document.getElementById('registerEmail')?.value.trim();
+            const password = document.getElementById('registerPassword')?.value;
+            const confirmPassword = document.getElementById('registerConfirmPassword')?.value;
 
             if (!name || !email || !password || !confirmPassword) {
                 showNotification('error', 'Please fill all fields!');
                 return;
             }
 
-            if (!validateEmail(email)) {
-                showNotification('error', 'Please enter a valid email!');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('error', 'Invalid email format!');
                 return;
             }
 
             if (password.length < 6) {
-                showNotification('error', 'Password must be at least 6 characters!');
+                showNotification('error', 'Password must be 6+ characters!');
                 return;
             }
 
@@ -3005,46 +2936,37 @@
                 return;
             }
 
-            const existingUser = sessionData.users.find(u => u.email === email);
-            if (existingUser) {
-                showNotification('error', 'User already exists with this email!');
+            if (sessionData.users.find(u => u.email === email)) {
+                showNotification('error', 'Email already registered!');
                 return;
             }
 
-            const newUser = {
+            sessionData.users.push({
                 id: Date.now(),
-                name: name,
-                email: email,
-                password: password,
+                name, email, password,
                 hasApplied: false,
                 authProvider: 'email',
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            sessionData.users.push(newUser);
-            showNotification('success', 'Registration successful! Please login.');
-            
-            // Clear form
-            document.getElementById('registerName').value = '';
-            document.getElementById('registerEmail').value = '';
-            document.getElementById('registerPassword').value = '';
-            document.getElementById('registerConfirmPassword').value = '';
-            
+            showNotification('success', 'Registration successful!');
+            ['registerName', 'registerEmail', 'registerPassword', 'registerConfirmPassword']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
             toggleToLogin();
         }
 
         function loginUser() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const email = document.getElementById('loginEmail')?.value.trim();
+            const password = document.getElementById('loginPassword')?.value;
 
             if (!email || !password) {
-                showNotification('error', 'Please enter email and password!');
+                showNotification('error', 'Enter email and password!');
                 return;
             }
 
             const user = sessionData.users.find(u => u.email === email && u.password === password);
             if (!user) {
-                showNotification('error', 'Invalid email or password!');
+                showNotification('error', 'Invalid credentials!');
                 return;
             }
 
@@ -3055,26 +2977,20 @@
             showNotification('success', `Welcome ${user.name}!`);
         }
 
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
         // ==================== ADMIN ====================
         function showAdminLogin() {
-            document.getElementById('adminPasswordModal').classList.add('active');
-            setTimeout(() => {
-                document.getElementById('adminPassword').focus();
-            }, 100);
+            document.getElementById('adminPasswordModal')?.classList.add('active');
+            setTimeout(() => document.getElementById('adminPassword')?.focus(), 100);
         }
 
         function closeAdminLogin() {
-            document.getElementById('adminPasswordModal').classList.remove('active');
-            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPasswordModal')?.classList.remove('active');
+            const input = document.getElementById('adminPassword');
+            if (input) input.value = '';
         }
 
         function verifyAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
+            const password = document.getElementById('adminPassword')?.value;
             if (password === 'admin123') {
                 currentUser = { name: 'Admin', role: 'admin' };
                 currentRole = 'admin';
@@ -3082,66 +2998,58 @@
                 showAdminDashboard();
                 showNotification('success', 'Welcome Admin!');
             } else {
-                showNotification('error', 'Invalid admin password!');
+                showNotification('error', 'Invalid password!');
             }
         }
 
         function showAdminDashboard() {
-            document.getElementById('publicPage').classList.add('hidden');
-            document.getElementById('userLoginPage').classList.add('hidden');
-            document.getElementById('adminDashboard').classList.remove('hidden');
+            document.getElementById('publicPage')?.classList.add('hidden');
+            document.getElementById('userLoginPage')?.classList.add('hidden');
+            document.getElementById('adminDashboard')?.classList.remove('hidden');
             loadApplications();
         }
 
-        // ==================== LOGOUT ====================
         function logout() {
-            if (currentUser && currentUser.authProvider === 'google') {
+            if (currentUser?.authProvider === 'google' && typeof google !== 'undefined') {
                 google.accounts.id.disableAutoSelect();
             }
-            
             currentUser = null;
             currentRole = null;
             updateAuthButton();
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('publicPage').classList.remove('hidden');
+            document.getElementById('adminDashboard')?.classList.add('hidden');
+            document.getElementById('publicPage')?.classList.remove('hidden');
             hideApplicationForm();
-            showNotification('success', 'Logged out successfully!');
+            showNotification('success', 'Logged out!');
         }
-                // ==================== PAYMENT PROCESSING ====================
+
+        // ==================== PAYMENT ====================
         async function processStripePayment() {
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn?.innerHTML;
             
             try {
-                submitBtn.innerHTML = '💳 Processing Payment...';
-                submitBtn.disabled = true;
+                if (btn) {
+                    btn.innerHTML = '💳 Processing Payment...';
+                    btn.disabled = true;
+                }
 
-                const confirmed = confirm(
-                    `💳 Stripe Payment\n\n` +
-                    `Amount: AED ${REGISTRATION_FEE_AED}\n\n` +
-                    `Click OK to proceed with payment`
-                );
-                
-                if (!confirmed) {
-                    throw new Error('Payment cancelled by user');
+                if (!confirm(`💳 Payment: AED ${REGISTRATION_FEE_AED}\n\nClick OK to proceed`)) {
+                    throw new Error('Payment cancelled');
                 }
                 
-                // Simulate payment processing
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Generate payment ID
-                const paymentId = 'pi_' + Math.random().toString(36).substr(2, 24);
-                return paymentId;
-
+                await new Promise(r => setTimeout(r, 2000));
+                return 'pi_' + Math.random().toString(36).substr(2, 24);
             } catch (error) {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                if (btn) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
                 throw error;
             }
         }
 
         // ==================== FORM SUBMISSION ====================
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
 
             if (!currentUser) {
@@ -3150,180 +3058,138 @@
             }
 
             const ageData = calculateAge();
-            if (!ageData || ageData.age < 5) {
-                showNotification('error', 'Minimum age is 5 years!');
+            if (!ageData) {
+                showNotification('error', 'Please enter valid date of birth!');
                 return;
             }
 
-            // Validate required fields
-            const countryCode = document.getElementById('countryCode').value;
-            const talentCategory = document.getElementById('talentCategory').value;
-            const mobile = document.getElementById('mobile').value;
-            const talentDescription = document.getElementById('talentDescription').value;
+            const countryCode = document.getElementById('countryCode')?.value;
+            const talentCategory = document.getElementById('talentCategory')?.value;
+            const mobile = document.getElementById('mobile')?.value;
+            const talentDescription = document.getElementById('talentDescription')?.value;
 
-            if (!countryCode) {
-                showNotification('error', 'Please select a country code!');
-                return;
-            }
-
-            if (!talentCategory) {
-                showNotification('error', 'Please select a talent category!');
-                return;
-            }
-
-            if (!mobile || mobile.length < 9) {
-                showNotification('error', 'Please enter a valid mobile number!');
+            if (!countryCode || !talentCategory || !mobile || mobile.length < 9) {
+                showNotification('error', 'Please fill all required fields!');
                 return;
             }
 
             if (!talentDescription || talentDescription.length < 50) {
-                showNotification('error', 'Please describe your talent (min 50 characters)!');
+                showNotification('error', 'Describe your talent (min 50 chars)!');
                 return;
             }
 
-            // Check for existing application
-            const existingApp = sessionData.applications.find(app => 
-                app.userEmail === currentUser.email || app.email === currentUser.email
-            );
-            if (existingApp) {
-                showNotification('warning', `You have already submitted an application!\nStatus: ${existingApp.status}`);
+            const fileInput = document.getElementById('fileUpload');
+            if (!fileInput?.files.length) {
+                showNotification('error', 'Please upload at least one file!');
                 return;
             }
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
 
-            processStripePayment()
-                .then((paymentId) => {
-                    submitBtn.innerHTML = '⏳ Processing files...';
-                    
-                    const fileInput = document.getElementById('fileUpload');
-                    const files = fileInput.files;
-                    
-                    if (files.length === 0) {
-                        showNotification('error', 'Please upload at least one file!');
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                        return;
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn?.innerHTML;
+
+            try {
+                const paymentId = await processStripePayment();
+                
+                if (btn) btn.innerHTML = '⏳ Processing files...';
+
+                const files = fileInput.files;
+                const filePromises = [];
+                const fileNames = [];
+                const fileTypes = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].size > 50 * 1024 * 1024) {
+                        throw new Error(`File too large: ${files[i].name}`);
                     }
+                    fileNames.push(files[i].name);
+                    fileTypes.push(files[i].type);
+                    filePromises.push(new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onload = e => resolve(e.target.result);
+                        reader.readAsDataURL(files[i]);
+                    }));
+                }
 
-                    // Validate file sizes
-                    for (let i = 0; i < files.length; i++) {
-                        if (files[i].size > 50 * 1024 * 1024) {
-                            showNotification('error', `File too large: ${files[i].name} (max 50MB)`);
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
-                            return;
-                        }
-                    }
-                    
-                    const filePromises = [];
-                    const fileNames = [];
-                    const fileTypes = [];
-                    
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        fileNames.push(file.name);
-                        fileTypes.push(file.type);
-                        
-                        filePromises.push(new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = (e) => resolve(e.target.result);
-                            reader.readAsDataURL(file);
-                        }));
-                    }
-                    
-                    Promise.all(filePromises).then((fileDataArray) => {
-                        submitBtn.innerHTML = '⏳ Uploading to Google Drive...';
+                const fileDataArray = await Promise.all(filePromises);
+                
+                if (btn) btn.innerHTML = '⏳ Uploading to Drive...';
 
-                        const fullMobile = countryCode + mobile;
-                        const talentSubCategory = document.getElementById('talentSubCategory')?.value || '';
+                const formData = {
+                    id: Date.now(),
+                    odId: currentUser.id,
+                    userEmail: currentUser.email,
+                    userName: currentUser.name,
+                    userPhoto: currentUser.photoURL || null,
+                    name: document.getElementById('fullName')?.value,
+                    email: document.getElementById('email')?.value,
+                    countryCode,
+                    mobile: countryCode + mobile,
+                    dob: document.getElementById('dateOfBirth')?.value,
+                    age: ageData.age,
+                    ageCategory: ageData.category,
+                    talentCategory,
+                    talentSubCategory: document.getElementById('talentSubCategory')?.value || '',
+                    talent: talentDescription,
+                    files: files.length,
+                    fileNames,
+                    fileTypes,
+                    fileData: fileDataArray,
+                    status: 'Pending',
+                    paymentId,
+                    paymentAmount: REGISTRATION_FEE_AED,
+                    paymentCurrency: CURRENCY,
+                    paymentStatus: 'Paid',
+                    submittedAt: new Date().toLocaleString()
+                };
 
-                        const formData = {
-                            id: Date.now(),
-                            userId: currentUser.id,
-                            userEmail: currentUser.email,
-                            userName: currentUser.name,
-                            userPhoto: currentUser.photoURL || null,
-                            name: document.getElementById('fullName').value,
-                            email: document.getElementById('email').value,
-                            countryCode: countryCode,
-                            mobile: fullMobile,
-                            dob: document.getElementById('dateOfBirth').value,
-                            age: ageData.age,
-                            ageCategory: ageData.category,
-                            talentCategory: talentCategory,
-                            talentSubCategory: talentSubCategory,
-                            talent: talentDescription,
-                            files: files.length,
-                            fileNames: fileNames,
-                            fileData: fileDataArray,
-                            fileTypes: fileTypes,
-                            status: 'Pending',
-                            paymentId: paymentId,
-                            paymentAmount: REGISTRATION_FEE_AED,
-                            paymentCurrency: CURRENCY,
-                            paymentStatus: 'Paid',
-                            submittedAt: new Date().toLocaleString()
-                        };
+                const result = await saveToGoogleSheets(formData);
+                
+                // Store without base64
+                const appToStore = { ...formData };
+                delete appToStore.fileData;
+                appToStore.driveUrls = result.driveUrls || [];
+                appToStore.folderUrl = result.folderUrl || '';
+                
+                sessionData.applications.push(appToStore);
+                pendingApplication = appToStore;
+                currentUser.hasApplied = true;
 
-                        // Save to Google Sheets (files uploaded to Drive)
-                        saveToGoogleSheets(formData).then((result) => {
-                            // Store application without base64 data
-                            const appToStore = { ...formData };
-                            delete appToStore.fileData; // Remove base64 data
-                            appToStore.driveUrls = result.driveUrls || [];
-                            appToStore.folderUrl = result.folderUrl || '';
-                            
-                            sessionData.applications.push(appToStore);
-                            pendingApplication = appToStore;
+                if (btn) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
 
-                            // Update user status
-                            currentUser.hasApplied = true;
-                            const userIndex = sessionData.users.findIndex(u => u.id === currentUser.id);
-                            if (userIndex !== -1) {
-                                sessionData.users[userIndex].hasApplied = true;
-                            }
-                            
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
-                            
-                            // Show success modal
-                            document.getElementById('successPaymentId').textContent = paymentId;
-                            document.getElementById('successEmail').textContent = formData.email;
-                            document.getElementById('successCategory').textContent = talentCategory;
-                            document.getElementById('successModal').classList.add('active');
+                document.getElementById('successPaymentId').textContent = paymentId;
+                document.getElementById('successEmail').textContent = formData.email;
+                document.getElementById('successCategory').textContent = talentCategory;
+                document.getElementById('successModal')?.classList.add('active');
 
-                        }).catch(err => {
-                            console.error('Save error:', err);
-                            showNotification('error', 'Error saving application. Please try again.');
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
-                        });
-                    });
-                })
-                .catch((error) => {
-                    console.error('Payment error:', error);
-                    showNotification('error', error.message || 'Payment failed');
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                });
+            } catch (error) {
+                console.error('Submission error:', error);
+                showNotification('error', error.message || 'Submission failed');
+                if (btn) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
         }
 
         function closeSuccessModal() {
-            document.getElementById('successModal').classList.remove('active');
+            document.getElementById('successModal')?.classList.remove('active');
             hideApplicationForm();
         }
-
-        // ==================== ADMIN - LOAD APPLICATIONS ====================
+                // ==================== ADMIN - LOAD APPLICATIONS ====================
         async function loadApplications() {
             const body = document.getElementById('applicationsBody');
             if (!body) return;
 
-            body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem;">
-                <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
-                Loading applications...
-            </td></tr>`;
+            body.innerHTML = `
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 3rem;">
+                        <div class="loading-spinner" style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
+                        <div>Loading applications from Google Sheets...</div>
+                    </td>
+                </tr>`;
 
             try {
                 const sheetApps = await loadFromGoogleSheets();
@@ -3337,531 +3203,581 @@
                 });
 
                 if (allApps.length === 0) {
-                    body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
-                        No applications yet
-                    </td></tr>`;
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                                <div>No applications yet</div>
+                            </td>
+                        </tr>`;
                     updateStats([]);
                     return;
                 }
 
-                // Sort by date descending
+                // Sort by date
                 allApps.sort((a, b) => {
-                    try {
-                        return new Date(b.submittedAt) - new Date(a.submittedAt);
-                    } catch (e) {
-                        return 0;
-                    }
+                    try { return new Date(b.submittedAt) - new Date(a.submittedAt); }
+                    catch { return 0; }
                 });
 
-                // Update session data
                 sessionData.applications = allApps;
 
-                // Generate table rows
-                const rows = allApps.map(app => {
-                    const statusClass = (app.status || 'Pending').toLowerCase();
-                    const driveUrls = app.driveUrls || [];
-                    const fileNames = app.fileNames || [];
-                    const fileCount = driveUrls.length || app.files || 0;
-                    
-                    // Build file links HTML for the table
-                    let fileLinksHtml = '<span style="color: rgba(255,255,255,0.4);">No files</span>';
-                    if (driveUrls.length > 0) {
-                        fileLinksHtml = `
-                            <div style="max-height: 80px; overflow-y: auto; font-size: 0.8rem;">
-                                ${driveUrls.map((url, i) => {
-                                    const name = fileNames[i] || `File ${i + 1}`;
-                                    const shortName = name.length > 18 ? name.substring(0, 18) + '...' : name;
-                                    return `<a href="${url}" target="_blank" style="display: block; color: #f6cc68; text-decoration: none; padding: 2px 0;" title="${name}">📄 ${shortName}</a>`;
-                                }).join('')}
-                            </div>
-                            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" style="display: inline-block; margin-top: 4px; color: #f6cc68; font-size: 0.75rem; text-decoration: none;">📂 Open Folder</a>` : ''}
-                        `;
-                    }
-                    
-                    return `
-                        <tr>
-                            <td>
-                                <div class="user-cell">
-                                    ${app.userPhoto 
-                                        ? `<img src="${app.userPhoto}" class="user-avatar" alt="${app.userName || app.name}">` 
-                                        : `<div class="user-avatar-placeholder">${((app.userName || app.name || 'U').charAt(0)).toUpperCase()}</div>`
-                                    }
-                                    <div>
-                                        <div class="user-info-name">${app.userName || app.name || '—'}</div>
-                                        <div class="user-info-email">${app.userEmail || app.email || '—'}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${app.mobile || '—'}</td>
-                            <td>${app.age || '—'}</td>
-                            <td><span class="category-badge">${app.ageCategory || '—'}</span></td>
-                            <td>${app.talentCategory || '—'}</td>
-                            <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${(app.talent || '').replace(/"/g, '&quot;')}">
-                                ${(app.talent || '—').slice(0, 50)}${(app.talent || '').length > 50 ? '...' : ''}
-                            </td>
-                            <td style="min-width: 160px;">
-                                ${fileLinksHtml}
-                            </td>
-                            <td style="color: #4ade80; font-weight: 600;">AED ${app.paymentAmount || REGISTRATION_FEE_AED}</td>
-                            <td><span class="status-badge status-${statusClass}">${app.status || 'Pending'}</span></td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${app.id}')" title="View Details">👁️</button>
-                                    <button class="action-btn action-btn-approve" onclick="updateApplicationStatus('${app.id}', 'Approved')" title="Approve">✓</button>
-                                    <button class="action-btn action-btn-reject" onclick="updateApplicationStatus('${app.id}', 'Rejected')" title="Reject">✗</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                body.innerHTML = rows;
+                // Build table rows
+                body.innerHTML = allApps.map(app => buildApplicationRow(app)).join('');
                 updateStats(allApps);
 
             } catch (error) {
-                console.error('Error loading applications:', error);
-                body.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 3rem; color: #F87171;">
-                    <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
-                    Error loading applications. Please refresh.
-                </td></tr>`;
+                console.error('Load error:', error);
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 3rem; color: #F87171;">
+                            <div style="font-size: 2rem; margin-bottom: 1rem;">❌</div>
+                            <div>Error: ${error.message}</div>
+                            <button onclick="loadApplications()" class="btn btn-primary" style="margin-top: 1rem;">🔄 Retry</button>
+                        </td>
+                    </tr>`;
             }
         }
 
-        function updateStats(apps) {
-            const totalAppsEl = document.getElementById('totalApps');
-            const totalRevenueEl = document.getElementById('totalRevenue');
-            
-            if (totalAppsEl) totalAppsEl.textContent = apps.length;
-            
-            const revenue = apps.reduce((sum, app) => sum + (parseFloat(app.paymentAmount) || 0), 0);
-            if (totalRevenueEl) totalRevenueEl.textContent = revenue.toFixed(0);
+        function buildApplicationRow(app) {
+    const status = app.status || 'Pending';
+    const statusClass = status.toLowerCase();
+    const driveUrls = app.driveUrls || [];
+    const fileNames = app.fileNames || [];
+    
+    // Safe string conversion for talent field
+    const talentText = safeString(app.talent);
 
-            const categories = { 'Junior': 0, 'Teenager': 0, 'Elder': 0, 'Senior': 0 };
-            apps.forEach(app => {
-                if (categories.hasOwnProperty(app.ageCategory)) {
-                    categories[app.ageCategory]++;
-                }
-            });
+    // Build file links
+    let filesHtml = '<span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">No files</span>';
+    if (driveUrls.length > 0) {
+        filesHtml = `
+            <div style="display: flex; flex-direction: column; gap: 3px; max-height: 80px; overflow-y: auto;">
+                ${driveUrls.slice(0, 3).map((url, i) => {
+                    const name = fileNames[i] || `File ${i + 1}`;
+                    const shortName = name.length > 15 ? name.substring(0, 15) + '...' : name;
+                    const icon = getFileIcon(name);
+                    return `<a href="${url}" target="_blank" style="display: flex; align-items: center; gap: 4px; color: #f6cc68; text-decoration: none; font-size: 0.75rem; padding: 2px 6px; background: rgba(246,204,104,0.1); border-radius: 4px;" title="${name}">${icon} ${shortName}</a>`;
+                }).join('')}
+                ${driveUrls.length > 3 ? `<span style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">+${driveUrls.length - 3} more</span>` : ''}
+            </div>
+            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" style="display: inline-block; margin-top: 4px; color: #f6cc68; font-size: 0.7rem; text-decoration: none;">📂 Folder</a>` : ''}
+        `;
+    }
 
-            const juniorEl = document.getElementById('juniorCount');
-            const teenagerEl = document.getElementById('teenagerCount');
-            const elderEl = document.getElementById('elderCount');
-            const seniorEl = document.getElementById('seniorCount');
+    // Action buttons based on status
+    let actionBtns = '';
+    if (status === 'Pending') {
+        actionBtns = `
+            <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
+            <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
+        `;
+    } else if (status === 'Approved') {
+        actionBtns = `
+            <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
+            <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')">↺ Reset</button>
+        `;
+    } else {
+        actionBtns = `
+            <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
+            <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')">↺ Reset</button>
+        `;
+    }
 
-            if (juniorEl) juniorEl.textContent = categories['Junior'];
-            if (teenagerEl) teenagerEl.textContent = categories['Teenager'];
-            if (elderEl) elderEl.textContent = categories['Elder'];
-            if (seniorEl) seniorEl.textContent = categories['Senior'];
-        }
-
-        function updateApplicationStatus(id, status) {
-            const app = sessionData.applications.find(a => String(a.id) === String(id));
-            if (!app) {
-                showNotification('error', 'Application not found!');
-                return;
-            }
-
-            if (confirm(`Are you sure you want to mark this application as "${status}"?`)) {
-                // Update locally
-                const idx = sessionData.applications.findIndex(a => String(a.id) === String(id));
-                if (idx !== -1) {
-                    sessionData.applications[idx].status = status;
-                }
-                
-                // Update in Google Sheets
-                updateStatusInGoogleSheets(id, status);
-                
-                // Reload table
-                loadApplications();
-                
-                showNotification('success', `Application ${status.toLowerCase()} successfully!`);
-            }
-        }
-
-        // ==================== VIEW APPLICATION DETAILS MODAL ====================
-        function viewApplicationDetails(appId) {
-            const app = sessionData.applications.find(a => String(a.id) === String(appId));
-            if (!app) {
-                showNotification('error', 'Application not found!');
-                return;
-            }
-
-            currentViewingApp = app;
-            const driveUrls = app.driveUrls || [];
-            const fileNames = app.fileNames || [];
-
-            const modalContent = document.getElementById('applicationDetailContent');
-            if (!modalContent) return;
-            
-            // Build files section
-            let filesHtml = '<p style="color: rgba(255,255,255,0.5);">No files uploaded</p>';
-            if (driveUrls.length > 0) {
-                filesHtml = `
-                    <div style="display: grid; gap: 0.75rem; max-height: 250px; overflow-y: auto;">
-                        ${driveUrls.map((url, i) => {
-                            const name = fileNames[i] || `File ${i + 1}`;
-                            let icon = '📄';
-                            const lowerName = name.toLowerCase();
-                            if (lowerName.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/)) icon = '🖼️';
-                            else if (lowerName.match(/\.(mp4|mov|avi|webm|mkv)$/)) icon = '🎬';
-                            else if (lowerName.match(/\.(mp3|wav|ogg|m4a|flac)$/)) icon = '🎵';
-                            else if (lowerName.match(/\.pdf$/)) icon = '📑';
-                            
-                            return `
-                                <div style="background: rgba(8,4,4,0.6); border: 1px solid rgba(246,204,104,0.3); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 200px;">
-                                        <span style="font-size: 1.5rem;">${icon}</span>
-                                        <span style="color: #fff; word-break: break-all;">${name}</span>
-                                    </div>
-                                    <div style="display: flex; gap: 0.5rem;">
-                                        <a href="${url}" target="_blank" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">👁️ View</a>
-                                        <a href="${url.replace('/view?usp=sharing', '/view').replace('/view', '/uc?export=download')}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">⬇️ Download</a>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
+    return `
+        <tr data-id="${app.id}">
+            <td>
+                <div class="user-cell">
+                    ${app.userPhoto 
+                        ? `<img src="${app.userPhoto}" class="user-avatar" alt="">` 
+                        : `<div class="user-avatar-placeholder">${(app.userName || app.name || 'U').charAt(0).toUpperCase()}</div>`
+                    }
+                    <div>
+                        <div class="user-info-name">${app.userName || app.name || '—'}</div>
+                        <div class="user-info-email">${app.userEmail || app.email || '—'}</div>
                     </div>
-                    ${app.folderUrl ? `
-                        <a href="${app.folderUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem; width: 100%; text-align: center;">
-                            📂 Open All Files in Google Drive
-                        </a>
-                    ` : ''}
+                </div>
+            </td>
+            <td>${app.mobile || '—'}</td>
+            <td>
+                <div>${app.age || '—'} yrs</div>
+                <span class="category-badge" style="font-size: 0.65rem;">${app.ageCategory || '—'}</span>
+            </td>
+            <td>
+                <div style="font-weight: 600; font-size: 0.85rem;">${safeString(app.talentCategory) || '—'}</div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">${safeString(app.talentSubCategory) || ''}</div>
+            </td>
+            <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${talentText.replace(/"/g, '&quot;')}">
+                ${talentText.slice(0, 50) || '—'}...
+            </td>
+            <td style="min-width: 150px;">${filesHtml}</td>
+            <td style="color: #4ade80; font-weight: 700;">AED ${app.paymentAmount || 55}</td>
+            <td><span class="status-badge status-${statusClass}" id="status-${app.id}">${status}</span></td>
+            <td>
+                <div class="action-btns" id="actions-${app.id}">
+                    <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${app.id}')" style="width: 100%;">👁️ View</button>
+                    ${actionBtns}
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+        // ==================== STATUS CHANGE FUNCTIONS ====================
+        function approveApplication(id) {
+            const app = sessionData.applications.find(a => String(a.id) === String(id));
+            if (!app) return showNotification('error', 'Application not found!');
+            
+            if (confirm(`✅ APPROVE\n\n${app.userName || app.name}\n${app.talentCategory}\n\nProceed?`)) {
+                changeApplicationStatus(id, 'Approved');
+            }
+        }
+
+        function rejectApplication(id) {
+            const app = sessionData.applications.find(a => String(a.id) === String(id));
+            if (!app) return showNotification('error', 'Application not found!');
+            
+            if (confirm(`❌ REJECT\n\n${app.userName || app.name}\n${app.talentCategory}\n\nProceed?`)) {
+                changeApplicationStatus(id, 'Rejected');
+            }
+        }
+
+        function resetToPending(id) {
+            if (confirm('Reset to Pending?')) {
+                changeApplicationStatus(id, 'Pending');
+            }
+        }
+
+        async function changeApplicationStatus(id, newStatus) {
+            const actionsDiv = document.getElementById(`actions-${id}`);
+            const statusBadge = document.getElementById(`status-${id}`);
+            
+            if (actionsDiv) {
+                actionsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 0.5rem;">
+                        <div class="loading-spinner" style="font-size: 1.25rem;">⏳</div>
+                        <div style="color: #f6cc68; font-size: 0.75rem;">Updating...</div>
+                    </div>
                 `;
             }
 
-            modalContent.innerHTML = `
-                <div style="display: grid; gap: 1.5rem;">
-                    <!-- Applicant Header -->
-                    <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(246,204,104,0.2); flex-wrap: wrap;">
-                        ${app.userPhoto 
-                            ? `<img src="${app.userPhoto}" style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(246,204,104,0.3);">` 
-                            : `<div style="width: 60px; height: 60px; border-radius: 12px; background: linear-gradient(45deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #010000;">${((app.userName || app.name || 'U').charAt(0)).toUpperCase()}</div>`
-                        }
-                        <div style="flex: 1; min-width: 200px;">
-                            <h3 style="margin: 0; font-size: 1.25rem; color: #fff;">${app.userName || app.name || '—'}</h3>
-                            <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6); font-size: 0.9rem;">${app.userEmail || app.email || '—'}</p>
-                        </div>
-                        <span class="status-badge status-${(app.status || 'pending').toLowerCase()}">${app.status || 'Pending'}</span>
-                    </div>
+            try {
+                const result = await updateStatusInGoogleSheets(id, newStatus);
+                
+                if (result.success !== false) {
+                    // Update local data
+                    const idx = sessionData.applications.findIndex(a => String(a.id) === String(id));
+                    if (idx !== -1) sessionData.applications[idx].status = newStatus;
 
-                    <!-- Details Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Mobile</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.mobile || '—'}</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Date of Birth</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.dob || '—'}</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Age</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.age || '—'} years</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Age Category</label>
-                            <p style="margin: 0.25rem 0 0;"><span class="category-badge">${app.ageCategory || '—'}</span></p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Talent Category</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.talentCategory || '—'}</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Sub-Category</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${app.talentSubCategory || '—'}</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Payment</label>
-                            <p style="margin: 0.25rem 0 0; color: #4ade80; font-size: 0.95rem; font-weight: 600;">AED ${app.paymentAmount || 55} ✓</p>
-                        </div>
-                        <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                            <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Files</label>
-                            <p style="margin: 0.25rem 0 0; color: #fff; font-size: 0.95rem;">${driveUrls.length} uploaded</p>
-                        </div>
-                    </div>
+                    // Update UI
+                    if (statusBadge) {
+                        statusBadge.className = `status-badge status-${newStatus.toLowerCase()}`;
+                        statusBadge.textContent = newStatus;
+                        statusBadge.classList.add('pulse-animation');
+                        setTimeout(() => statusBadge.classList.remove('pulse-animation'), 500);
+                    }
 
-                    <!-- Talent Description -->
-                    <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                        <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Talent Description</label>
-                        <p style="margin: 0.5rem 0 0; color: #fff; line-height: 1.6; max-height: 150px; overflow-y: auto; white-space: pre-wrap;">${app.talent || '—'}</p>
-                    </div>
+                    updateActionButtons(id, newStatus);
+                    updateStats(sessionData.applications);
+                    
+                    const emoji = { Approved: '✅', Rejected: '❌', Pending: '⏳' }[newStatus];
+                    showNotification('success', `${emoji} Status: ${newStatus}`);
 
-                    <!-- Payment Details -->
-                    <div style="background: rgba(8,4,4,0.4); padding: 1rem; border-radius: 10px;">
-                        <label style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase; letter-spacing: 0.5px;">Payment ID</label>
-                        <p style="margin: 0.25rem 0 0; color: #fff; font-family: monospace; font-size: 0.9rem;">${app.paymentId || '—'}</p>
-                    </div>
-
-                    <!-- Uploaded Files -->
-                    <div>
-                        <label style="font-size: 0.85rem; color: #f6cc68; text-transform: uppercase; display: block; margin-bottom: 0.75rem; letter-spacing: 0.5px;">
-                            📁 Uploaded Files (${driveUrls.length})
-                        </label>
-                        ${filesHtml}
-                    </div>
-
-                    <!-- Submitted At -->
-                    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid rgba(246,204,104,0.2); color: rgba(255,255,255,0.5); font-size: 0.85rem;">
-                        📅 Submitted: ${app.submittedAt || '—'}
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('applicationDetailModal').classList.add('active');
+                    // Send email
+                    if (newStatus !== 'Pending') {
+                        const app = sessionData.applications.find(a => String(a.id) === String(id));
+                        if (app) sendStatusEmail(app, newStatus);
+                    }
+                } else {
+                    throw new Error(result.error || 'Update failed');
+                }
+            } catch (error) {
+                console.error('Status update error:', error);
+                showNotification('error', 'Update failed: ' + error.message);
+                
+                const app = sessionData.applications.find(a => String(a.id) === String(id));
+                if (app) updateActionButtons(id, app.status || 'Pending');
+            }
         }
 
+        function updateActionButtons(id, status) {
+            const actionsDiv = document.getElementById(`actions-${id}`);
+            if (!actionsDiv) return;
+
+            let btns = '';
+            if (status === 'Pending') {
+                btns = `
+                    <button class="action-btn action-btn-approve" onclick="approveApplication('${id}')">✓ Approve</button>
+                    <button class="action-btn action-btn-reject" onclick="rejectApplication('${id}')">✗ Reject</button>
+                `;
+            } else if (status === 'Approved') {
+                btns = `
+                    <button class="action-btn action-btn-reject" onclick="rejectApplication('${id}')">✗ Reject</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')">↺ Reset</button>
+                `;
+            } else {
+                btns = `
+                    <button class="action-btn action-btn-approve" onclick="approveApplication('${id}')">✓ Approve</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')">↺ Reset</button>
+                `;
+            }
+
+            actionsDiv.innerHTML = `
+                <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${id}')" style="width: 100%;">👁️ View</button>
+                ${btns}
+            `;
+        }
+
+        function sendStatusEmail(app, status) {
+            try {
+                const template = status === 'Approved' ? TEMPLATE_APPROVED : TEMPLATE_REJECTED;
+                emailjs.send(EMAILJS_SERVICE_ID, template, {
+                    to_email: app.userEmail || app.email,
+                    to_name: app.userName || app.name,
+                    status: status,
+                    talent_category: app.talentCategory || 'N/A'
+                }).then(() => console.log('✅ Email sent'))
+                  .catch(e => console.warn('Email failed:', e));
+            } catch (e) {
+                console.warn('EmailJS error:', e);
+            }
+        }
+
+        // ==================== VIEW APPLICATION DETAILS ====================
+        function viewApplicationDetails(appId) {
+    const app = sessionData.applications.find(a => String(a.id) === String(appId));
+    if (!app) return showNotification('error', 'Not found!');
+
+    currentViewingApp = app;
+    const driveUrls = app.driveUrls || [];
+    const fileNames = app.fileNames || [];
+
+    // ✅ Fixed: Use correct ID "applicationDetailsBody"
+    const content = document.getElementById('applicationDetailsBody');
+    if (!content) {
+        console.error('Modal content element not found!');
+        return;
+    }
+
+    // Build files section
+    let filesHtml = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">📭 No files</div>';
+    
+    if (driveUrls.length > 0) {
+        filesHtml = `
+            <div style="display: grid; gap: 0.75rem; max-height: 400px; overflow-y: auto;">
+                ${driveUrls.map((url, i) => {
+                    const name = fileNames[i] || `File ${i + 1}`;
+                    const icon = getFileIcon(name);
+                    const fileId = url.match(/\/d\/([^\/]+)/)?.[1] || '';
+                    const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url;
+                    const previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : '';
+                    
+                    let preview = '';
+                    if (name.match(/\.(jpg|jpeg|png|gif|webp|pdf|mp4|mov)$/i) && previewUrl) {
+                        preview = `<iframe src="${previewUrl}" style="width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px; background: #000;"></iframe>`;
+                    }
+                    
+                    return `
+                        <div style="background: rgba(8,4,4,0.6); border: 1px solid rgba(246,204,104,0.3); border-radius: 12px; padding: 1rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.75rem;">${icon}</span>
+                                    <span style="color: #fff; font-weight: 600;">${name}</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="${url}" target="_blank" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">👁️ View</a>
+                                    <a href="${downloadUrl}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">⬇️ Download</a>
+                                </div>
+                            </div>
+                            ${preview}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">📂 Open All in Drive</a>` : ''}
+        `;
+    }
+
+    // ✅ Build action buttons based on status
+    const status = safeString(app.status) || 'Pending';
+    let actionButtonsHtml = '';
+    
+    if (status === 'Pending') {
+        actionButtonsHtml = `
+            <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
+                ✓ Approve
+            </button>
+            <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
+                ✗ Reject
+            </button>
+        `;
+    } else if (status === 'Approved') {
+        actionButtonsHtml = `
+            <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
+                ✗ Reject
+            </button>
+            <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
+                ↺ Reset to Pending
+            </button>
+        `;
+    } else {
+        // Rejected status
+        actionButtonsHtml = `
+            <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
+                ✓ Approve
+            </button>
+            <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
+                ↺ Reset to Pending
+            </button>
+        `;
+    }
+
+    content.innerHTML = `
+        <div style="display: grid; gap: 1.5rem;">
+            <!-- Header -->
+            <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(246,204,104,0.2); flex-wrap: wrap;">
+                ${app.userPhoto 
+                    ? `<img src="${app.userPhoto}" style="width: 70px; height: 70px; border-radius: 14px; object-fit: cover; border: 3px solid rgba(246,204,104,0.4);">` 
+                    : `<div style="width: 70px; height: 70px; border-radius: 14px; background: linear-gradient(135deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #010000;">${(safeString(app.userName) || safeString(app.name) || 'U').charAt(0).toUpperCase()}</div>`
+                }
+                <div style="flex: 1;">
+                    <h3 style="margin: 0; font-size: 1.4rem; color: #fff;">${safeString(app.userName) || safeString(app.name) || '—'}</h3>
+                    <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6);">✉️ ${safeString(app.userEmail) || safeString(app.email) || '—'}</p>
+                    <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.5);">📱 ${safeString(app.mobile) || '—'}</p>
+                </div>
+                <span class="status-badge status-${status.toLowerCase()}">${status}</span>
+            </div>
+
+            <!-- Details Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem;">
+                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">DOB</div>
+                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.dob) || '—'}</div>
+                </div>
+                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Age</div>
+                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.age)} years</div>
+                </div>
+                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Category</div>
+                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.ageCategory) || '—'}</div>
+                </div>
+                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Payment</div>
+                    <div style="margin-top: 0.25rem; color: #4ade80; font-weight: 600;">AED ${app.paymentAmount || 55} ✓</div>
+                </div>
+            </div>
+
+            <!-- Talent -->
+            <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">🎭 Talent Category</div>
+                <div style="margin-top: 0.5rem; color: #fff; font-size: 1.1rem; font-weight: 600;">${safeString(app.talentCategory) || '—'}</div>
+                ${safeString(app.talentSubCategory) ? `<div style="color: rgba(255,255,255,0.6);">↳ ${safeString(app.talentSubCategory)}</div>` : ''}
+            </div>
+
+            <!-- Description -->
+            <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">📝 Description</div>
+                <div style="margin-top: 0.5rem; color: #fff; line-height: 1.7; max-height: 150px; overflow-y: auto; white-space: pre-wrap;">${safeString(app.talent) || '—'}</div>
+            </div>
+
+            <!-- Payment ID -->
+            <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">💳 Payment ID</div>
+                <div style="margin-top: 0.25rem; color: #fff; font-family: monospace;">${safeString(app.paymentId) || '—'}</div>
+            </div>
+
+            <!-- Files -->
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="font-size: 0.9rem; color: #f6cc68; text-transform: uppercase; font-weight: 600;">📁 Files</span>
+                    <span style="background: #f6cc68; color: #010000; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 700;">${driveUrls.length}</span>
+                </div>
+                ${filesHtml}
+            </div>
+
+            <!-- Submitted -->
+            <div style="text-align: center; padding-top: 1rem; border-top: 1px solid rgba(246,204,104,0.2); color: rgba(255,255,255,0.5);">
+                📅 Submitted: ${safeString(app.submittedAt) || '—'}
+            </div>
+
+            <!-- ✅ ACTION BUTTONS - Approve/Reject -->
+            <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 2px solid rgba(246,204,104,0.3);">
+                ${actionButtonsHtml}
+            </div>
+        </div>
+    `;
+
+    // ✅ Fixed: Use correct ID "applicationDetailsModal"
+    document.getElementById('applicationDetailsModal')?.classList.add('active');
+}
+
         function closeApplicationDetailModal() {
-            document.getElementById('applicationDetailModal').classList.remove('active');
+            document.getElementById('applicationDetailModal')?.classList.remove('active');
             currentViewingApp = null;
         }
 
-        // ==================== RECEIPT GENERATION ====================
+        // ==================== STATS ====================
+        function updateStats(apps) {
+            const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            
+            setEl('totalApps', apps.length);
+            setEl('totalRevenue', apps.reduce((s, a) => s + (parseFloat(a.paymentAmount) || 0), 0).toFixed(0));
+            
+            const counts = { Junior: 0, Teenager: 0, Elder: 0, Senior: 0 };
+            apps.forEach(a => { if (counts[a.ageCategory] !== undefined) counts[a.ageCategory]++; });
+            
+            setEl('juniorCount', counts.Junior);
+            setEl('teenagerCount', counts.Teenager);
+            setEl('elderCount', counts.Elder);
+            setEl('seniorCount', counts.Senior);
+        }
+
+        // ==================== RECEIPT ====================
         function generateReceipt() {
-            if (!pendingApplication) {
-                showNotification('error', 'No application data found!');
-                return;
-            }
+            if (!pendingApplication) return showNotification('error', 'No application data!');
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            const app = pendingApplication;
             
-            // Header - Golden color #f6cc68
+            // Header
             doc.setFillColor(246, 204, 104);
             doc.rect(0, 0, 210, 50, 'F');
-            
-            // Dark accent line
             doc.setFillColor(1, 0, 0);
             doc.rect(0, 46, 210, 4, 'F');
             
-            // Logo/Title
             doc.setFontSize(28);
             doc.setTextColor(1, 0, 0);
             doc.setFont('helvetica', 'bold');
             doc.text('GODSPEED', 105, 22, { align: 'center' });
-            
             doc.setFontSize(12);
-            doc.text('SINGHULARS GOT TALENT - RECEIPT', 105, 35, { align: 'center' });
+            doc.text('SINGHULARS GOT TALENT', 105, 35, { align: 'center' });
             
-            // Content
             let y = 65;
-            
-            doc.setTextColor(1, 0, 0);
             doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
             doc.text('Payment Receipt', 14, y);
-            
             doc.setFontSize(9);
             doc.setTextColor(100, 100, 100);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`#${pendingApplication.paymentId}`, 196, y, { align: 'right' });
+            doc.text('#' + app.paymentId, 196, y, { align: 'right' });
             
-            y += 12;
+            y += 10;
             doc.setDrawColor(246, 204, 104);
-            doc.setLineWidth(0.5);
             doc.line(14, y, 196, y);
             y += 10;
             
-            // Details
             doc.setFontSize(10);
             doc.setTextColor(60, 60, 60);
             
             const details = [
-                ['Full Name:', pendingApplication.userName || pendingApplication.name],
-                ['Email:', pendingApplication.userEmail || pendingApplication.email],
-                ['Mobile:', pendingApplication.mobile || '—'],
-                ['Date of Birth:', pendingApplication.dob || '—'],
-                ['Age:', `${pendingApplication.age || '—'} years (${pendingApplication.ageCategory || '—'})`],
-                ['Talent Category:', pendingApplication.talentCategory || '—'],
-                ['Sub-Category:', pendingApplication.talentSubCategory || '—'],
-                ['Payment Amount:', `AED ${pendingApplication.paymentAmount || REGISTRATION_FEE_AED}`],
-                ['Payment Status:', 'PAID ✓'],
-                ['Submitted:', pendingApplication.submittedAt || '—']
+                ['Name', app.userName || app.name],
+                ['Email', app.userEmail || app.email],
+                ['Mobile', app.mobile],
+                ['Age', `${app.age} years (${app.ageCategory})`],
+                ['Category', app.talentCategory],
+                ['Amount', `AED ${app.paymentAmount}`],
+                ['Status', 'PAID ✓'],
+                ['Date', app.submittedAt]
             ];
             
             details.forEach(([label, value]) => {
                 doc.setFont('helvetica', 'bold');
-                doc.text(label, 14, y);
+                doc.text(label + ':', 14, y);
                 doc.setFont('helvetica', 'normal');
-                doc.text(String(value), 65, y);
-                y += 8;
+                doc.text(String(value || '—'), 55, y);
+                y += 7;
             });
             
-            // Drive URLs section
-            if (pendingApplication.driveUrls && pendingApplication.driveUrls.length > 0) {
+            if (app.driveUrls?.length) {
                 y += 5;
                 doc.setFont('helvetica', 'bold');
-                doc.setTextColor(1, 0, 0);
-                doc.text('Uploaded Files:', 14, y);
-                y += 7;
-                
+                doc.text('Files:', 14, y);
+                y += 6;
                 doc.setFont('helvetica', 'normal');
-                doc.setTextColor(60, 60, 60);
-                pendingApplication.driveUrls.forEach((url, i) => {
-                    const name = (pendingApplication.fileNames && pendingApplication.fileNames[i]) || `File ${i + 1}`;
-                    doc.text(`• ${name}`, 14, y);
+                app.driveUrls.forEach((_, i) => {
+                    doc.text('• ' + (app.fileNames?.[i] || `File ${i + 1}`), 14, y);
                     y += 5;
                 });
-                
-                if (pendingApplication.folderUrl) {
-                    y += 3;
-                    doc.setTextColor(100, 100, 100);
-                    doc.setFontSize(8);
-                    doc.text('Files stored in Google Drive', 14, y);
-                }
             }
             
-            y += 15;
-            
-            // Status Box
+            y += 10;
             doc.setFillColor(246, 204, 104);
-            doc.roundedRect(14, y, 182, 22, 3, 3, 'F');
-            
-            doc.setFontSize(11);
+            doc.roundedRect(14, y, 182, 20, 3, 3, 'F');
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(1, 0, 0);
-            doc.text('Application Status: PENDING REVIEW', 105, y + 9, { align: 'center' });
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.text('You will be notified via email within 3-5 business days.', 105, y + 16, { align: 'center' });
+            doc.text('Status: PENDING REVIEW', 105, y + 12, { align: 'center' });
             
-            // Footer
             doc.setFontSize(8);
             doc.setTextColor(120, 120, 120);
-            doc.text('Thank you for applying to SINGHULARS GOT TALENT — GODSPEED', 105, 275, { align: 'center' });
-            doc.text('For queries: singhularsgottalent@gmail.com', 105, 280, { align: 'center' });
-            doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 285, { align: 'center' });
+            doc.text('Thank you for applying to Singhulars Got Talent!', 105, 280, { align: 'center' });
 
-            // Save
-            const fileName = `SGT_Receipt_${pendingApplication.paymentId || Date.now()}.pdf`;
-            doc.save(fileName);
-            
+            doc.save(`SGT_Receipt_${app.paymentId}.pdf`);
             showNotification('success', 'Receipt downloaded!');
         }
 
-        // ==================== NOTIFICATION SYSTEM ====================
+        // ==================== NOTIFICATIONS ====================
         function showNotification(type, message) {
-            // Remove existing
-            const existing = document.querySelector('.notification');
-            if (existing) existing.remove();
+            document.querySelector('.notification')?.remove();
 
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            
-            const bgColors = {
-                'success': 'rgba(34, 197, 94, 0.95)',
-                'error': 'rgba(239, 68, 68, 0.95)',
-                'warning': 'rgba(246, 204, 104, 0.95)',
-                'info': 'rgba(59, 130, 246, 0.95)'
+            const colors = {
+                success: 'linear-gradient(135deg, rgba(34,197,94,0.95), rgba(22,163,74,0.95))',
+                error: 'linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95))',
+                warning: 'linear-gradient(135deg, rgba(246,204,104,0.95), rgba(234,179,8,0.95))',
+                info: 'linear-gradient(135deg, rgba(59,130,246,0.95), rgba(37,99,235,0.95))'
             };
             
+            const icons = { success: '✓', error: '✗', warning: '⚠', info: 'ℹ' };
             const textColor = type === 'warning' ? '#010000' : '#fff';
-            const icons = { 'success': '✓', 'error': '✗', 'warning': '⚠', 'info': 'ℹ' };
 
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: ${bgColors[type] || bgColors.info};
-                color: ${textColor};
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                font-weight: 500;
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-                animation: slideIn 0.3s ease;
-                max-width: 380px;
-                font-family: 'Outfit', sans-serif;
+            const el = document.createElement('div');
+            el.className = 'notification';
+            el.style.cssText = `
+                position: fixed; top: 100px; right: 20px; background: ${colors[type]};
+                color: ${textColor}; padding: 1rem 1.5rem; border-radius: 12px; font-weight: 500;
+                z-index: 10000; display: flex; align-items: center; gap: 0.75rem;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;
+                max-width: 400px; font-family: 'Outfit', sans-serif;
             `;
-
-            notification.innerHTML = `
-                <span style="font-size: 1.25rem;">${icons[type] || 'ℹ'}</span>
-                <span>${message}</span>
-            `;
-
-            document.body.appendChild(notification);
-
-            // Auto remove
+            el.innerHTML = `<span style="font-size: 1.5rem;">${icons[type]}</span><span>${message}</span>`;
+            
+            document.body.appendChild(el);
+            
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => notification.remove(), 300);
+                el.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => el.remove(), 300);
             }, 4000);
         }
 
-        // ==================== UTILITY FUNCTIONS ====================
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth' });
-            }
+        // ==================== UTILITIES ====================
+        function refreshApplications() {
+            showNotification('info', 'Refreshing...');
+            loadApplications();
         }
 
-        function formatDate(dateString) {
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-            } catch (e) {
-                return dateString;
-            }
-        }
-
-        // ==================== EXPORT FUNCTIONS (ADMIN) ====================
         function exportToCSV() {
-            if (sessionData.applications.length === 0) {
-                showNotification('warning', 'No applications to export!');
-                return;
+            if (!sessionData.applications.length) {
+                return showNotification('warning', 'No applications!');
             }
 
-            const headers = [
-                'ID', 'Name', 'Email', 'Mobile', 'DOB', 'Age', 'Age Category',
-                'Talent Category', 'Sub-Category', 'Talent Description',
-                'Files', 'Drive Folder', 'Payment ID', 'Amount', 'Status', 'Submitted At'
-            ];
-
-            const rows = sessionData.applications.map(app => [
-                app.id,
-                app.name || app.userName,
-                app.email || app.userEmail,
-                app.mobile,
-                app.dob,
-                app.age,
-                app.ageCategory,
-                app.talentCategory,
-                app.talentSubCategory,
-                `"${(app.talent || '').replace(/"/g, '""').substring(0, 500)}"`,
-                (app.driveUrls || []).length,
-                app.folderUrl || '',
-                app.paymentId,
-                app.paymentAmount,
-                app.status,
-                app.submittedAt
+            const headers = ['ID', 'Name', 'Email', 'Mobile', 'Age', 'Category', 'Talent', 'Files', 'Payment', 'Status', 'Date'];
+            const rows = sessionData.applications.map(a => [
+                a.id, a.name || a.userName, a.email || a.userEmail, a.mobile,
+                a.age, a.talentCategory, `"${(a.talent || '').slice(0, 100).replace(/"/g, '""')}"`,
+                (a.driveUrls || []).length, a.paymentAmount, a.status, a.submittedAt
             ]);
 
-            const csvContent = [
-                headers.join(','),
-                ...rows.map(row => row.join(','))
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `SGT_Applications_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `SGT_Export_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
 
-            showNotification('success', 'Applications exported to CSV!');
+            showNotification('success', 'Exported!');
         }
 
-        // ==================== CONSOLE INITIALIZATION ====================
-        console.log('🚀 Singhulars Got Talent - GODSPEED');
-        console.log('📋 Version: 2.0');
-        console.log('💾 Google Sheets URL:', GOOGLE_SHEETS_URL);
+        console.log('🚀 Singhulars Got Talent - GODSPEED v3.1');
+        console.log('📋 API:', GOOGLE_SHEETS_URL);
     </script>
     </body>
 </html>
