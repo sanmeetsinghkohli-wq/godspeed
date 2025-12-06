@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Singhulars Got Talent - GODSPEED</title>
+    <title>Arabian Talent League - GODSPEED</title>
     <script src="https://cdn.tailwindcss.com"></script>
    
     <!-- Google Identity Services -->
@@ -149,7 +149,8 @@
         .text-primary {
             color: var(--primary);
         }
-                /* ==================== NAVIGATION ==================== */
+
+        /* ==================== NAVIGATION ==================== */
         .navbar {
             position: fixed;
             top: 0;
@@ -473,7 +474,8 @@
             font-size: 1.25rem;
             font-weight: 600;
         }
-                /* ==================== SPONSORS SECTION ==================== */
+
+        /* ==================== SPONSORS SECTION ==================== */
         .sponsors-section {
             padding: 60px 2rem;
             background: rgba(26, 26, 26, 0.5);
@@ -890,7 +892,8 @@
             accent-color: var(--primary);
             cursor: pointer;
         }
-                /* File Upload */
+
+        /* File Upload */
         .file-upload-area {
             border: 2px dashed rgba(246, 204, 104, 0.3);
             border-radius: 16px;
@@ -1661,17 +1664,16 @@
     <div class="floating-orb orb-1"></div>
     <div class="floating-orb orb-2"></div>
     <div class="floating-orb orb-3"></div>
-
-    <!-- ==================== PUBLIC PAGE ==================== -->
+        <!-- ==================== PUBLIC PAGE ==================== -->
     <div id="publicPage">
         <!-- Navigation -->
         <nav class="navbar" id="navbar">
             <div class="nav-container">
                 <div class="logo-group">
-                    <div class="logo-icon">G</div>
+                    <div class="logo-icon"><img src="Arabian Talent League .jpg"></div>
                     <div>
-                        <div class="logo-text">GODSPEED</div>
-                        <div class="logo-subtitle">Singhulars Got Talent</div>
+                        <div class="logo-text">Arabian Talent League</div>
+                        <div class="logo-subtitle"></div>
                     </div>
                 </div>
                 <div class="nav-actions" id="navActions">
@@ -1691,12 +1693,12 @@
                 <div class="hero-content">
                     <div class="hero-badge">
                         <span class="hero-badge-dot"></span>
-                        <span>🇦🇪 UAE's Got Talent - Applications Open</span>
+                        <span>Arabian Talent League - Applications Opening Soon</span>
                     </div>
                     <h1 class="hero-title">
-                        <span class="hero-title-line">Discover Your</span>
-                        <span class="hero-title-line hero-title-accent">Spotlight</span>
-                        <span class="hero-title-line">Moment</span>
+                        <span class="hero-title-line">Arabian</span>
+                        <span class="hero-title-line hero-title-accent">Talent League</span>
+                        <span class="hero-title-line"></span>
                     </h1>
                     <p class="hero-description">
                         Join the most prestigious talent competition in the UAE.
@@ -1705,26 +1707,14 @@
                     </p>
                     <div class="hero-cta">
                         <button onclick="handleApplyNow()" class="btn btn-primary btn-lg">
-                            🎯 Apply Now
+                            Applications opening soon
                         </button>
-                        <button class="btn btn-secondary btn-lg">
-                            Learn More
-                        </button>
+                       
+                        <button onclick="showSponsorModal()" class="btn btn-secondary btn-lg">
+        To Be a Sponsor Click Here
+    </button>
                     </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Participants</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">50K</div>
-                            <div class="stat-label">Prize Pool (AED)</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">8</div>
-                            <div class="stat-label">Categories</div>
-                        </div>
-                    </div>
+                   
                 </div>
                 <div class="hero-visual">
                     <div class="hero-card-stack">
@@ -1751,24 +1741,23 @@
             <div class="sponsors-container">
                 <div class="sponsors-header">
                     <div class="sponsors-label">Proudly Supported By</div>
-                    <h2 class="sponsors-title">Our Sponsors</h2>
+                    <h2 class="sponsors-title">Our Partners</h2>
                 </div>
                 <div class="sponsors-grid">
                     <div class="sponsor-item">
-                        <div class="sponsor-name">PLATINUM</div>
-                        <div class="sponsor-type">Title Sponsor</div>
+                        <div class="sponsor-name">Managed and Organized By</div>
+                        <img src="godspeed.jpg" style="height:120px; width:120px; object-fit:contain; display:block; margin:0 auto;">
+                        <div class="sponsor-type">Godspeed Events & Entertainment</div>
                     </div>
                     <div class="sponsor-item">
-                        <div class="sponsor-name">GOLD</div>
-                        <div class="sponsor-type">Co-Sponsor</div>
+                        <div class="sponsor-name">Conceptualized By</div>
+                       <img src="singhulars logo.jpeg" style="height:120px; width:120px; object-fit:contain; display:block; margin:0 auto;">
+                        <div class="sponsor-type">Singhulars</div>
                     </div>
                     <div class="sponsor-item">
-                        <div class="sponsor-name">SILVER</div>
-                        <div class="sponsor-type">Associate</div>
-                    </div>
-                    <div class="sponsor-item">
-                        <div class="sponsor-name">BRONZE</div>
-                        <div class="sponsor-type">Partner</div>
+                        <div class="sponsor-name">Technology Partner</div>
+                        <img src="devnity.jpg" style="height:120px; width:120px; object-fit:contain; display:block; margin:0 auto;">
+                        <div class="sponsor-type">Devnity co</div>
                     </div>
                 </div>
             </div>
@@ -1872,13 +1861,14 @@
                 </div>
             </div>
         </section>
-                <!-- Application Form Section -->
+
+        <!-- Application Form Section -->
         <section class="form-section hidden" id="applicationSection">
             <div class="form-container">
                 <div class="form-card">
                     <div class="form-header">
                         <h2 class="form-title">🇦🇪 Application Form</h2>
-                        <p class="form-subtitle">Fill in your details to participate in UAE's Got Talent</p>
+                        <p class="form-subtitle">Fill in your details to participate in Arabian Talent League</p>
                     </div>
                     <form id="talentForm" class="form-grid">
                         <!-- Row 1: Name & Email -->
@@ -2012,11 +2002,11 @@
                 <div class="footer-grid">
                     <div class="footer-brand">
                         <div class="footer-logo">
-                            <div class="footer-logo-icon">G</div>
-                            <div class="footer-logo-text">GODSPEED</div>
+                            <div class="footer-logo-icon"><img src="Arabian Talent League .jpg"></div>
+                            <div class="footer-logo-text">Arabian Talent League</div>
                         </div>
                         <p class="footer-description">
-                            UAE's Got Talent celebrates every community, nationality, and creative expression.
+                            Arabian Talent League celebrates every community, nationality, and creative expression.
                             All talents based in the UAE are welcome to participate.
                         </p>
                     </div>
@@ -2032,10 +2022,10 @@
                     <div>
                         <h4 class="footer-heading">Categories</h4>
                         <ul class="footer-links">
-                            <li class="footer-link"><a href="#">Junior (5-10)</a></li>
-                            <li class="footer-link"><a href="#">Teenager (11-19)</a></li>
-                            <li class="footer-link"><a href="#">Elder (20-35)</a></li>
-                            <li class="footer-link"><a href="#">Senior (36+)</a></li>
+                            <li class="footer-link"><a href="#">Young Icons (10-20)</a></li>
+                            <li class="footer-link"><a href="#">Urban Millennial (21-40)</a></li>
+                            <li class="footer-link"><a href="#">Legacy Builders (41-60)</a></li>
+                            <li class="footer-link"><a href="#">Timeless Legends (60+)</a></li>
                         </ul>
                     </div>
                     <div>
@@ -2048,19 +2038,20 @@
                     </div>
                 </div>
                 <div class="footer-bottom">
-                    <div>© 2024 UAE's Got Talent - Singhulars. All rights reserved.</div>
+                    <div>© 2024 Arabian Talent League - Singhulars. All rights reserved.</div>
                     <div>Powered by GODSPEED</div>
                 </div>
             </div>
         </footer>
     </div>
-        <!-- ==================== USER LOGIN PAGE ==================== -->
+
+    <!-- ==================== USER LOGIN PAGE ==================== -->
     <div id="userLoginPage" class="hidden" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;">
         <div class="form-card" style="max-width: 450px; width: 100%;">
             <div class="form-header">
-                <div class="logo-icon" style="margin: 0 auto 1rem; width: 60px; height: 60px; font-size: 1.75rem;">G</div>
+                <div class="logo-icon" style="margin: 0 auto 1rem; width: 60px; height: 60px; font-size: 1.75rem;"><img src="Arabian Talent League .jpg"></div>
                 <h2 class="form-title">Welcome Back</h2>
-                <p class="form-subtitle">Sign in to continue to UAE's Got Talent</p>
+                <p class="form-subtitle">Sign in to continue to Arabian Talent League</p>
             </div>
 
             <div id="googleSignInButton" style="display: flex; justify-content: center; margin-bottom: 1.5rem;"></div>
@@ -2122,10 +2113,10 @@
         <header class="admin-header">
             <div class="admin-nav">
                 <div class="logo-group">
-                    <div class="logo-icon">G</div>
+                    <div class="logo-icon"><img src="Arabian Talent League .jpg"></div>
                     <div>
                         <div class="logo-text">ADMIN PANEL</div>
-                        <div class="logo-subtitle">UAE's Got Talent</div>
+                        <div class="logo-subtitle">Arabian Talent League</div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 1rem;">
@@ -2149,20 +2140,20 @@
                     <div class="stat-card-value">AED <span id="totalRevenue">0</span></div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Junior (5-10)</div>
-                    <div class="stat-card-value" id="juniorCount">0</div>
+                    <div class="stat-card-label">Young Icons (10-20)</div>
+                    <div class="stat-card-value" id="youngIconsCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Teenager (11-19)</div>
-                    <div class="stat-card-value" id="teenagerCount">0</div>
+                    <div class="stat-card-label">Urban Millennial (21-40)</div>
+                    <div class="stat-card-value" id="urbanMillennialCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Elder (20-35)</div>
-                    <div class="stat-card-value" id="elderCount">0</div>
+                    <div class="stat-card-label">Legacy Builders (41-60)</div>
+                    <div class="stat-card-value" id="legacyBuildersCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Senior (36+)</div>
-                    <div class="stat-card-value" id="seniorCount">0</div>
+                    <div class="stat-card-label">Timeless Legends (60+)</div>
+                    <div class="stat-card-value" id="timelessLegendsCount">0</div>
                 </div>
             </div>
 
@@ -2286,9 +2277,58 @@
             </div>
         </div>
     </div>
-    <script> 
-    
-               // ==================== CONFIGURATION ====================
+        <!-- Sponsor Contact Modal -->
+    <div id="sponsorContactModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">🤝 Become a Sponsor</h3>
+                <button class="modal-close" onclick="closeSponsorModal()">×</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 2.5rem;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f6cc68, #d4a84a); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2.5rem;">
+                    💼
+                </div>
+                <h4 style="font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 1rem; color: #f6cc68;">
+                    Partner With Us
+                </h4>
+                <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem; line-height: 1.6;">
+                    Join us as a sponsor and be part of the Arabian Talent League journey. 
+                    Support emerging talents and gain exceptional brand visibility.
+                </p>
+                
+                <div style="background: rgba(246, 204, 104, 0.1); border: 1px solid rgba(246, 204, 104, 0.3); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h5 style="color: #f6cc68; margin-bottom: 1rem; font-size: 1.1rem;">Contact Our Sponsorship Team</h5>
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <span style="font-size: 1.25rem;">📧</span>
+                        <a href="mailto:nanki@godspeed-events.com" style="color: #f6cc68; text-decoration: none; font-size: 1.05rem; font-weight: 600;">
+                            nanki@godspeed-events.com
+                        </a>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <span style="font-size: 1.25rem;">📱</span>
+                        <a href="tel:+971505794074" style="color: #f6cc68; text-decoration: none; font-size: 1.05rem; font-weight: 600;">
+                            +971 50 579 4074
+                        </a>
+                    </div>
+                </div>
+
+                <div style="background: rgba(1, 0, 0, 0.5); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin: 0;">
+                        <strong style="color: #f6cc68;">Office Hours:</strong><br>
+                        Sunday - Thursday: 9:00 AM - 6:00 PM (UAE Time)
+                    </p>
+                </div>
+
+                <button onclick="closeSponsorModal()" class="btn btn-primary" style="width: 100%;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+        <script>
+        // ==================== CONFIGURATION ====================
         const GOOGLE_CLIENT_ID = '510466997628-85povrl38c2ccinvgb7op6993q3514s3.apps.googleusercontent.com';
         const EMAILJS_PUBLIC_KEY = 'YZpoRY4fYkni2gA6H';
         const EMAILJS_SERVICE_ID = 'service_gjyxfni';
@@ -2306,16 +2346,17 @@
 
         // Initialize Stripe
         const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
         // ==================== HELPER FUNCTIONS ====================
-function safeString(value) {
-    if (value === null || value === undefined) return "";
-    if (typeof value === "string") return value;
-    if (Array.isArray(value)) return value.join(", ");
-    if (typeof value === "object") {
-        return value.name || value.description || value.text || JSON.stringify(value);
-    }
-    return String(value);
-}
+        function safeString(value) {
+            if (value === null || value === undefined) return "";
+            if (typeof value === "string") return value;
+            if (Array.isArray(value)) return value.join(", ");
+            if (typeof value === "object") {
+                return value.name || value.description || value.text || JSON.stringify(value);
+            }
+            return String(value);
+        }
 
         // ==================== STATE MANAGEMENT ====================
         let currentUser = null;
@@ -2327,6 +2368,14 @@ function safeString(value) {
             applications: [],
             users: []
         };
+                // ==================== SPONSOR MODAL FUNCTIONS ====================
+        function showSponsorModal() {
+            document.getElementById('sponsorContactModal')?.classList.add('active');
+        }
+
+        function closeSponsorModal() {
+            document.getElementById('sponsorContactModal')?.classList.remove('active');
+        }
 
         // ==================== COUNTRY CODES ====================
         const countryCodes = [
@@ -2396,9 +2445,18 @@ function safeString(value) {
             ]
         };
 
+        // ==================== AGE CATEGORIES (UPDATED) ====================
+        function getAgeCategory(age) {
+            if (age >= 10 && age <= 20) return 'Young Icons';
+            if (age >= 21 && age <= 40) return 'Urban Millennial';
+            if (age >= 41 && age <= 60) return 'Legacy Builders';
+            if (age > 60) return 'Timeless Legends';
+            return 'Invalid';
+        }
+
         // ==================== INITIALIZATION ====================
         window.onload = function() {
-            console.log('🚀 Initializing Singhulars Got Talent...');
+            console.log('🚀 Initializing Arabian Talent League...');
             
             // Initialize Google Sign-In
             if (typeof google !== 'undefined' && google.accounts) {
@@ -2568,14 +2626,6 @@ function safeString(value) {
         }
 
         // ==================== AGE CALCULATION ====================
-        function getAgeCategory(age) {
-            if (age >= 5 && age <= 10) return 'Junior';
-            if (age >= 11 && age <= 19) return 'Teenager';
-            if (age >= 20 && age <= 35) return 'Elder';
-            if (age >= 36) return 'Senior';
-            return 'Invalid';
-        }
-
         function calculateAge() {
             const dobInput = document.getElementById('dateOfBirth');
             const ageDisplay = document.getElementById('ageDisplay');
@@ -2597,11 +2647,11 @@ function safeString(value) {
 
             const category = getAgeCategory(age);
 
-            if (age < 5) {
+            if (age < 10) {
                 ageDisplay.innerHTML = `
                     <div class="age-warning">
                         <span>⚠️</span>
-                        <span>Minimum age is 5 years. You are not eligible.</span>
+                        <span>Minimum age is 10 years. You are not eligible.</span>
                     </div>`;
                 if (submitBtn) submitBtn.disabled = true;
                 return null;
@@ -3021,8 +3071,7 @@ function safeString(value) {
             hideApplicationForm();
             showNotification('success', 'Logged out!');
         }
-
-        // ==================== PAYMENT ====================
+                // ==================== PAYMENT ====================
         async function processStripePayment() {
             const btn = document.getElementById('submitBtn');
             const originalText = btn?.innerHTML;
@@ -3068,7 +3117,7 @@ function safeString(value) {
             const mobile = document.getElementById('mobile')?.value;
             const talentDescription = document.getElementById('talentDescription')?.value;
 
-            if (!countryCode || !talentCategory || !mobile || mobile.length < 9) {
+            if (!countryCode || !talentCategory || !mobile || mobile.length < 7) {
                 showNotification('error', 'Please fill all required fields!');
                 return;
             }
@@ -3130,6 +3179,7 @@ function safeString(value) {
                     talentCategory,
                     talentSubCategory: document.getElementById('talentSubCategory')?.value || '',
                     talent: talentDescription,
+                    performanceLink: document.getElementById('performanceLink')?.value || '',
                     files: files.length,
                     fileNames,
                     fileTypes,
@@ -3178,7 +3228,8 @@ function safeString(value) {
             document.getElementById('successModal')?.classList.remove('active');
             hideApplicationForm();
         }
-                // ==================== ADMIN - LOAD APPLICATIONS ====================
+
+        // ==================== ADMIN - LOAD APPLICATIONS ====================
         async function loadApplications() {
             const body = document.getElementById('applicationsBody');
             if (!body) return;
@@ -3240,94 +3291,95 @@ function safeString(value) {
         }
 
         function buildApplicationRow(app) {
-    const status = app.status || 'Pending';
-    const statusClass = status.toLowerCase();
-    const driveUrls = app.driveUrls || [];
-    const fileNames = app.fileNames || [];
-    
-    // Safe string conversion for talent field
-    const talentText = safeString(app.talent);
+            const status = app.status || 'Pending';
+            const statusClass = status.toLowerCase();
+            const driveUrls = app.driveUrls || [];
+            const fileNames = app.fileNames || [];
+            
+            // Safe string conversion for talent field
+            const talentText = safeString(app.talent);
 
-    // Build file links
-    let filesHtml = '<span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">No files</span>';
-    if (driveUrls.length > 0) {
-        filesHtml = `
-            <div style="display: flex; flex-direction: column; gap: 3px; max-height: 80px; overflow-y: auto;">
-                ${driveUrls.slice(0, 3).map((url, i) => {
-                    const name = fileNames[i] || `File ${i + 1}`;
-                    const shortName = name.length > 15 ? name.substring(0, 15) + '...' : name;
-                    const icon = getFileIcon(name);
-                    return `<a href="${url}" target="_blank" style="display: flex; align-items: center; gap: 4px; color: #f6cc68; text-decoration: none; font-size: 0.75rem; padding: 2px 6px; background: rgba(246,204,104,0.1); border-radius: 4px;" title="${name}">${icon} ${shortName}</a>`;
-                }).join('')}
-                ${driveUrls.length > 3 ? `<span style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">+${driveUrls.length - 3} more</span>` : ''}
-            </div>
-            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" style="display: inline-block; margin-top: 4px; color: #f6cc68; font-size: 0.7rem; text-decoration: none;">📂 Folder</a>` : ''}
-        `;
-    }
-
-    // Action buttons based on status
-    let actionBtns = '';
-    if (status === 'Pending') {
-        actionBtns = `
-            <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
-            <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
-        `;
-    } else if (status === 'Approved') {
-        actionBtns = `
-            <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
-            <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')">↺ Reset</button>
-        `;
-    } else {
-        actionBtns = `
-            <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
-            <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')">↺ Reset</button>
-        `;
-    }
-
-    return `
-        <tr data-id="${app.id}">
-            <td>
-                <div class="user-cell">
-                    ${app.userPhoto 
-                        ? `<img src="${app.userPhoto}" class="user-avatar" alt="">` 
-                        : `<div class="user-avatar-placeholder">${(app.userName || app.name || 'U').charAt(0).toUpperCase()}</div>`
-                    }
-                    <div>
-                        <div class="user-info-name">${app.userName || app.name || '—'}</div>
-                        <div class="user-info-email">${app.userEmail || app.email || '—'}</div>
+            // Build file links
+            let filesHtml = '<span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">No files</span>';
+            if (driveUrls.length > 0) {
+                filesHtml = `
+                    <div style="display: flex; flex-direction: column; gap: 3px; max-height: 80px; overflow-y: auto;">
+                        ${driveUrls.slice(0, 3).map((url, i) => {
+                            const name = fileNames[i] || `File ${i + 1}`;
+                            const shortName = name.length > 15 ? name.substring(0, 15) + '...' : name;
+                            const icon = getFileIcon(name);
+                            return `<a href="${url}" target="_blank" style="display: flex; align-items: center; gap: 4px; color: #f6cc68; text-decoration: none; font-size: 0.75rem; padding: 2px 6px; background: rgba(246,204,104,0.1); border-radius: 4px;" title="${name}">${icon} ${shortName}</a>`;
+                        }).join('')}
+                        ${driveUrls.length > 3 ? `<span style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">+${driveUrls.length - 3} more</span>` : ''}
                     </div>
-                </div>
-            </td>
-            <td>${app.mobile || '—'}</td>
-            <td>
-                <div>${app.age || '—'} yrs</div>
-                <span class="category-badge" style="font-size: 0.65rem;">${app.ageCategory || '—'}</span>
-            </td>
-            <td>
-                <div style="font-weight: 600; font-size: 0.85rem;">${safeString(app.talentCategory) || '—'}</div>
-                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">${safeString(app.talentSubCategory) || ''}</div>
-            </td>
-            <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${talentText.replace(/"/g, '&quot;')}">
-                ${talentText.slice(0, 50) || '—'}...
-            </td>
-            <td style="min-width: 150px;">${filesHtml}</td>
-            <td style="color: #4ade80; font-weight: 700;">AED ${app.paymentAmount || 55}</td>
-            <td><span class="status-badge status-${statusClass}" id="status-${app.id}">${status}</span></td>
-            <td>
-                <div class="action-btns" id="actions-${app.id}">
-                    <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${app.id}')" style="width: 100%;">👁️ View</button>
-                    ${actionBtns}
-                </div>
-            </td>
-        </tr>
-    `;
-}
+                    ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" style="display: inline-block; margin-top: 4px; color: #f6cc68; font-size: 0.7rem; text-decoration: none;">📂 Folder</a>` : ''}
+                `;
+            }
+
+            // Action buttons based on status
+            let actionBtns = '';
+            if (status === 'Pending') {
+                actionBtns = `
+                    <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
+                    <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
+                `;
+            } else if (status === 'Approved') {
+                actionBtns = `
+                    <button class="action-btn action-btn-reject" onclick="rejectApplication('${app.id}')">✗ Reject</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')" style="background: rgba(156,150,119,0.2); color: #9C9677;">↺ Reset</button>
+                `;
+            } else {
+                actionBtns = `
+                    <button class="action-btn action-btn-approve" onclick="approveApplication('${app.id}')">✓ Approve</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${app.id}')" style="background: rgba(156,150,119,0.2); color: #9C9677;">↺ Reset</button>
+                `;
+            }
+
+            return `
+                <tr data-id="${app.id}">
+                    <td>
+                        <div class="user-cell">
+                            ${app.userPhoto 
+                                ? `<img src="${app.userPhoto}" class="user-avatar" alt="">` 
+                                : `<div class="user-avatar-placeholder">${(app.userName || app.name || 'U').charAt(0).toUpperCase()}</div>`
+                            }
+                            <div>
+                                <div class="user-info-name">${app.userName || app.name || '—'}</div>
+                                <div class="user-info-email">${app.userEmail || app.email || '—'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${app.mobile || '—'}</td>
+                    <td>
+                        <div>${app.age || '—'} yrs</div>
+                        <span class="category-badge" style="font-size: 0.65rem;">${app.ageCategory || '—'}</span>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 0.85rem;">${safeString(app.talentCategory) || '—'}</div>
+                        <div style="font-size: 0.7rem; color: rgba(255,255,255,0.5);">${safeString(app.talentSubCategory) || ''}</div>
+                    </td>
+                    <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${talentText.replace(/"/g, '&quot;')}">
+                        ${talentText.slice(0, 50) || '—'}...
+                    </td>
+                    <td>${app.dob || '—'}</td>
+                    <td style="min-width: 150px;">${filesHtml}</td>
+                    <td style="color: #4ade80; font-weight: 700;">AED ${app.paymentAmount || 55}</td>
+                    <td><span class="status-badge status-${statusClass}" id="status-${app.id}">${status}</span></td>
+                    <td>
+                        <div class="action-btns" id="actions-${app.id}" style="flex-direction: column; gap: 4px;">
+                            <button class="action-btn action-btn-view" onclick="viewApplicationDetails('${app.id}')" style="width: 100%;">👁️ View</button>
+                            ${actionBtns}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
 
         // ==================== STATUS CHANGE FUNCTIONS ====================
         function approveApplication(id) {
             const app = sessionData.applications.find(a => String(a.id) === String(id));
             if (!app) return showNotification('error', 'Application not found!');
-            
+
             if (confirm(`✅ APPROVE\n\n${app.userName || app.name}\n${app.talentCategory}\n\nProceed?`)) {
                 changeApplicationStatus(id, 'Approved');
             }
@@ -3336,7 +3388,7 @@ function safeString(value) {
         function rejectApplication(id) {
             const app = sessionData.applications.find(a => String(a.id) === String(id));
             if (!app) return showNotification('error', 'Application not found!');
-            
+
             if (confirm(`❌ REJECT\n\n${app.userName || app.name}\n${app.talentCategory}\n\nProceed?`)) {
                 changeApplicationStatus(id, 'Rejected');
             }
@@ -3413,12 +3465,12 @@ function safeString(value) {
             } else if (status === 'Approved') {
                 btns = `
                     <button class="action-btn action-btn-reject" onclick="rejectApplication('${id}')">✗ Reject</button>
-                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')">↺ Reset</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')" style="background: rgba(156,150,119,0.2); color: #9C9677;">↺ Reset</button>
                 `;
             } else {
                 btns = `
                     <button class="action-btn action-btn-approve" onclick="approveApplication('${id}')">✓ Approve</button>
-                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')">↺ Reset</button>
+                    <button class="action-btn action-btn-reset" onclick="resetToPending('${id}')" style="background: rgba(156,150,119,0.2); color: #9C9677;">↺ Reset</button>
                 `;
             }
 
@@ -3443,194 +3495,211 @@ function safeString(value) {
             }
         }
 
-        // ==================== VIEW APPLICATION DETAILS ====================
-        function viewApplicationDetails(appId) {
-    const app = sessionData.applications.find(a => String(a.id) === String(appId));
-    if (!app) return showNotification('error', 'Not found!');
-
-    currentViewingApp = app;
-    const driveUrls = app.driveUrls || [];
-    const fileNames = app.fileNames || [];
-
-    // ✅ Fixed: Use correct ID "applicationDetailsBody"
-    const content = document.getElementById('applicationDetailsBody');
-    if (!content) {
-        console.error('Modal content element not found!');
-        return;
-    }
-
-    // Build files section
-    let filesHtml = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">📭 No files</div>';
-    
-    if (driveUrls.length > 0) {
-        filesHtml = `
-            <div style="display: grid; gap: 0.75rem; max-height: 400px; overflow-y: auto;">
-                ${driveUrls.map((url, i) => {
-                    const name = fileNames[i] || `File ${i + 1}`;
-                    const icon = getFileIcon(name);
-                    const fileId = url.match(/\/d\/([^\/]+)/)?.[1] || '';
-                    const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url;
-                    const previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : '';
-                    
-                    let preview = '';
-                    if (name.match(/\.(jpg|jpeg|png|gif|webp|pdf|mp4|mov)$/i) && previewUrl) {
-                        preview = `<iframe src="${previewUrl}" style="width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px; background: #000;"></iframe>`;
-                    }
-                    
-                    return `
-                        <div style="background: rgba(8,4,4,0.6); border: 1px solid rgba(246,204,104,0.3); border-radius: 12px; padding: 1rem;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <span style="font-size: 1.75rem;">${icon}</span>
-                                    <span style="color: #fff; font-weight: 600;">${name}</span>
-                                </div>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <a href="${url}" target="_blank" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">👁️ View</a>
-                                    <a href="${downloadUrl}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">⬇️ Download</a>
-                                </div>
-                            </div>
-                            ${preview}
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-            ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">📂 Open All in Drive</a>` : ''}
-        `;
-    }
-
-    // ✅ Build action buttons based on status
-    const status = safeString(app.status) || 'Pending';
-    let actionButtonsHtml = '';
-    
-    if (status === 'Pending') {
-        actionButtonsHtml = `
-            <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
-                ✓ Approve
-            </button>
-            <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
-                ✗ Reject
-            </button>
-        `;
-    } else if (status === 'Approved') {
-        actionButtonsHtml = `
-            <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
-                ✗ Reject
-            </button>
-            <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
-                ↺ Reset to Pending
-            </button>
-        `;
-    } else {
-        // Rejected status
-        actionButtonsHtml = `
-            <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
-                ✓ Approve
-            </button>
-            <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
-                ↺ Reset to Pending
-            </button>
-        `;
-    }
-
-    content.innerHTML = `
-        <div style="display: grid; gap: 1.5rem;">
-            <!-- Header -->
-            <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(246,204,104,0.2); flex-wrap: wrap;">
-                ${app.userPhoto 
-                    ? `<img src="${app.userPhoto}" style="width: 70px; height: 70px; border-radius: 14px; object-fit: cover; border: 3px solid rgba(246,204,104,0.4);">` 
-                    : `<div style="width: 70px; height: 70px; border-radius: 14px; background: linear-gradient(135deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #010000;">${(safeString(app.userName) || safeString(app.name) || 'U').charAt(0).toUpperCase()}</div>`
-                }
-                <div style="flex: 1;">
-                    <h3 style="margin: 0; font-size: 1.4rem; color: #fff;">${safeString(app.userName) || safeString(app.name) || '—'}</h3>
-                    <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6);">✉️ ${safeString(app.userEmail) || safeString(app.email) || '—'}</p>
-                    <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.5);">📱 ${safeString(app.mobile) || '—'}</p>
-                </div>
-                <span class="status-badge status-${status.toLowerCase()}">${status}</span>
-            </div>
-
-            <!-- Details Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem;">
-                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">DOB</div>
-                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.dob) || '—'}</div>
-                </div>
-                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Age</div>
-                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.age)} years</div>
-                </div>
-                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Category</div>
-                    <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.ageCategory) || '—'}</div>
-                </div>
-                <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                    <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Payment</div>
-                    <div style="margin-top: 0.25rem; color: #4ade80; font-weight: 600;">AED ${app.paymentAmount || 55} ✓</div>
-                </div>
-            </div>
-
-            <!-- Talent -->
-            <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">🎭 Talent Category</div>
-                <div style="margin-top: 0.5rem; color: #fff; font-size: 1.1rem; font-weight: 600;">${safeString(app.talentCategory) || '—'}</div>
-                ${safeString(app.talentSubCategory) ? `<div style="color: rgba(255,255,255,0.6);">↳ ${safeString(app.talentSubCategory)}</div>` : ''}
-            </div>
-
-            <!-- Description -->
-            <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">📝 Description</div>
-                <div style="margin-top: 0.5rem; color: #fff; line-height: 1.7; max-height: 150px; overflow-y: auto; white-space: pre-wrap;">${safeString(app.talent) || '—'}</div>
-            </div>
-
-            <!-- Payment ID -->
-            <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
-                <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">💳 Payment ID</div>
-                <div style="margin-top: 0.25rem; color: #fff; font-family: monospace;">${safeString(app.paymentId) || '—'}</div>
-            </div>
-
-            <!-- Files -->
-            <div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                    <span style="font-size: 0.9rem; color: #f6cc68; text-transform: uppercase; font-weight: 600;">📁 Files</span>
-                    <span style="background: #f6cc68; color: #010000; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 700;">${driveUrls.length}</span>
-                </div>
-                ${filesHtml}
-            </div>
-
-            <!-- Submitted -->
-            <div style="text-align: center; padding-top: 1rem; border-top: 1px solid rgba(246,204,104,0.2); color: rgba(255,255,255,0.5);">
-                📅 Submitted: ${safeString(app.submittedAt) || '—'}
-            </div>
-
-            <!-- ✅ ACTION BUTTONS - Approve/Reject -->
-            <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 2px solid rgba(246,204,104,0.3);">
-                ${actionButtonsHtml}
-            </div>
-        </div>
-    `;
-
-    // ✅ Fixed: Use correct ID "applicationDetailsModal"
-    document.getElementById('applicationDetailsModal')?.classList.add('active');
-}
-
-        function closeApplicationDetailModal() {
-            document.getElementById('applicationDetailModal')?.classList.remove('active');
-            currentViewingApp = null;
-        }
-
-        // ==================== STATS ====================
+        // ==================== STATS (UPDATED CATEGORIES) ====================
         function updateStats(apps) {
-            const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const setEl = (id, val) => { 
+                const el = document.getElementById(id); 
+                if (el) el.textContent = val; 
+            };
             
             setEl('totalApps', apps.length);
             setEl('totalRevenue', apps.reduce((s, a) => s + (parseFloat(a.paymentAmount) || 0), 0).toFixed(0));
             
-            const counts = { Junior: 0, Teenager: 0, Elder: 0, Senior: 0 };
-            apps.forEach(a => { if (counts[a.ageCategory] !== undefined) counts[a.ageCategory]++; });
+            // Updated category names
+            const counts = { 
+                'Young Icons': 0, 
+                'Urban Millennial': 0, 
+                'Legacy Builders': 0, 
+                'Timeless Legends': 0 
+            };
             
-            setEl('juniorCount', counts.Junior);
-            setEl('teenagerCount', counts.Teenager);
-            setEl('elderCount', counts.Elder);
-            setEl('seniorCount', counts.Senior);
+            apps.forEach(a => { 
+                if (counts[a.ageCategory] !== undefined) counts[a.ageCategory]++; 
+            });
+            
+            setEl('youngIconsCount', counts['Young Icons']);
+            setEl('urbanMillennialCount', counts['Urban Millennial']);
+            setEl('legacyBuildersCount', counts['Legacy Builders']);
+            setEl('timelessLegendsCount', counts['Timeless Legends']);
+        }
+                // ==================== VIEW APPLICATION DETAILS ====================
+        function viewApplicationDetails(appId) {
+            const app = sessionData.applications.find(a => String(a.id) === String(appId));
+            if (!app) return showNotification('error', 'Not found!');
+
+            currentViewingApp = app;
+            const driveUrls = app.driveUrls || [];
+            const fileNames = app.fileNames || [];
+
+            const content = document.getElementById('applicationDetailsBody');
+            if (!content) {
+                console.error('Modal content element not found!');
+                return;
+            }
+
+            // Build files section
+            let filesHtml = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">📭 No files</div>';
+            
+            if (driveUrls.length > 0) {
+                filesHtml = `
+                    <div style="display: grid; gap: 0.75rem; max-height: 400px; overflow-y: auto;">
+                        ${driveUrls.map((url, i) => {
+                            const name = fileNames[i] || `File ${i + 1}`;
+                            const icon = getFileIcon(name);
+                            const fileId = url.match(/\/d\/([^\/]+)/)?.[1] || '';
+                            const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url;
+                            const previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : '';
+                            
+                            let preview = '';
+                            if (name.match(/\.(jpg|jpeg|png|gif|webp|pdf|mp4|mov)$/i) && previewUrl) {
+                                preview = `<iframe src="${previewUrl}" style="width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px; background: #000;"></iframe>`;
+                            }
+                            
+                            return `
+                                <div style="background: rgba(8,4,4,0.6); border: 1px solid rgba(246,204,104,0.3); border-radius: 12px; padding: 1rem;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <span style="font-size: 1.75rem;">${icon}</span>
+                                            <span style="color: #fff; font-weight: 600;">${name}</span>
+                                        </div>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <a href="${url}" target="_blank" class="btn btn-ghost" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">👁️ View</a>
+                                            <a href="${downloadUrl}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">⬇️ Download</a>
+                                        </div>
+                                    </div>
+                                    ${preview}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    ${app.folderUrl ? `<a href="${app.folderUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">📂 Open All in Drive</a>` : ''}
+                `;
+            }
+
+            // Build action buttons based on status
+            const status = safeString(app.status) || 'Pending';
+            let actionButtonsHtml = '';
+            
+            if (status === 'Pending') {
+                actionButtonsHtml = `
+                    <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
+                        ✓ Approve
+                    </button>
+                    <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
+                        ✗ Reject
+                    </button>
+                `;
+            } else if (status === 'Approved') {
+                actionButtonsHtml = `
+                    <button onclick="rejectApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(239,68,68,0.3); border: 2px solid rgba(239,68,68,0.5); color: #F87171; font-weight: 600; flex: 1;">
+                        ✗ Reject
+                    </button>
+                    <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
+                        ↺ Reset to Pending
+                    </button>
+                `;
+            } else {
+                // Rejected status
+                actionButtonsHtml = `
+                    <button onclick="approveApplication('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(34,197,94,0.3); border: 2px solid rgba(34,197,94,0.5); color: #4ade80; font-weight: 600; flex: 1;">
+                        ✓ Approve
+                    </button>
+                    <button onclick="resetToPending('${app.id}'); closeApplicationDetails();" class="btn" style="padding: 0.875rem; background: rgba(156,150,119,0.3); border: 2px solid rgba(156,150,119,0.5); color: #9C9677; font-weight: 600; flex: 1;">
+                        ↺ Reset to Pending
+                    </button>
+                `;
+            }
+
+            content.innerHTML = `
+                <div style="display: grid; gap: 1.5rem;">
+                    <!-- Header -->
+                    <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(246,204,104,0.2); flex-wrap: wrap;">
+                        ${app.userPhoto 
+                            ? `<img src="${app.userPhoto}" style="width: 70px; height: 70px; border-radius: 14px; object-fit: cover; border: 3px solid rgba(246,204,104,0.4);">` 
+                            : `<div style="width: 70px; height: 70px; border-radius: 14px; background: linear-gradient(135deg, #9C9677, #f6cc68); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: #010000;">${(safeString(app.userName) || safeString(app.name) || 'U').charAt(0).toUpperCase()}</div>`
+                        }
+                        <div style="flex: 1;">
+                            <h3 style="margin: 0; font-size: 1.4rem; color: #fff;">${safeString(app.userName) || safeString(app.name) || '—'}</h3>
+                            <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.6);">✉️ ${safeString(app.userEmail) || safeString(app.email) || '—'}</p>
+                            <p style="margin: 0.25rem 0 0; color: rgba(255,255,255,0.5);">📱 ${safeString(app.mobile) || '—'}</p>
+                        </div>
+                        <span class="status-badge status-${status.toLowerCase()}">${status}</span>
+                    </div>
+
+                    <!-- Details Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem;">
+                        <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                            <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">DOB</div>
+                            <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.dob) || '—'}</div>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                            <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Age</div>
+                            <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.age)} years</div>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                            <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Category</div>
+                            <div style="margin-top: 0.25rem; color: #fff; font-weight: 600;">${safeString(app.ageCategory) || '—'}</div>
+                        </div>
+                        <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                            <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">Payment</div>
+                            <div style="margin-top: 0.25rem; color: #4ade80; font-weight: 600;">AED ${app.paymentAmount || 55} ✓</div>
+                        </div>
+                    </div>
+
+                    <!-- Talent -->
+                    <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                        <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">🎭 Talent Category</div>
+                        <div style="margin-top: 0.5rem; color: #fff; font-size: 1.1rem; font-weight: 600;">${safeString(app.talentCategory) || '—'}</div>
+                        ${safeString(app.talentSubCategory) ? `<div style="color: rgba(255,255,255,0.6);">↳ ${safeString(app.talentSubCategory)}</div>` : ''}
+                    </div>
+
+                    <!-- Description -->
+                    <div style="background: rgba(8,4,4,0.5); padding: 1.25rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                        <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">📝 Description</div>
+                        <div style="margin-top: 0.5rem; color: #fff; line-height: 1.7; max-height: 150px; overflow-y: auto; white-space: pre-wrap;">${safeString(app.talent) || '—'}</div>
+                    </div>
+
+                    <!-- Performance Link -->
+                    ${app.performanceLink ? `
+                        <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                            <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">🎬 Performance Link</div>
+                            <a href="${app.performanceLink}" target="_blank" style="color: #f6cc68; text-decoration: none; font-size: 0.9rem;">View Performance →</a>
+                        </div>
+                    ` : ''}
+
+                    <!-- Payment ID -->
+                    <div style="background: rgba(8,4,4,0.5); padding: 1rem; border-radius: 10px; border: 1px solid rgba(246,204,104,0.15);">
+                        <div style="font-size: 0.7rem; color: #f6cc68; text-transform: uppercase;">💳 Payment ID</div>
+                        <div style="margin-top: 0.25rem; color: #fff; font-family: monospace;">${safeString(app.paymentId) || '—'}</div>
+                    </div>
+
+                    <!-- Files -->
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="font-size: 0.9rem; color: #f6cc68; text-transform: uppercase; font-weight: 600;">📁 Files</span>
+                            <span style="background: #f6cc68; color: #010000; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.75rem; font-weight: 700;">${driveUrls.length}</span>
+                        </div>
+                        ${filesHtml}
+                    </div>
+
+                    <!-- Submitted -->
+                    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid rgba(246,204,104,0.2); color: rgba(255,255,255,0.5);">
+                        📅 Submitted: ${safeString(app.submittedAt) || '—'}
+                    </div>
+
+                    <!-- ACTION BUTTONS - Approve/Reject -->
+                    <div style="display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 2px solid rgba(246,204,104,0.3);">
+                        ${actionButtonsHtml}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('applicationDetailsModal')?.classList.add('active');
+        }
+
+        function closeApplicationDetails() {
+            document.getElementById('applicationDetailsModal')?.classList.remove('active');
+            currentViewingApp = null;
         }
 
         // ==================== RECEIPT ====================
@@ -3652,7 +3721,7 @@ function safeString(value) {
             doc.setFont('helvetica', 'bold');
             doc.text('GODSPEED', 105, 22, { align: 'center' });
             doc.setFontSize(12);
-            doc.text('SINGHULARS GOT TALENT', 105, 35, { align: 'center' });
+            doc.text('ARABIAN TALENT LEAGUE', 105, 35, { align: 'center' });
             
             let y = 65;
             doc.setFontSize(16);
@@ -3709,9 +3778,9 @@ function safeString(value) {
             
             doc.setFontSize(8);
             doc.setTextColor(120, 120, 120);
-            doc.text('Thank you for applying to Singhulars Got Talent!', 105, 280, { align: 'center' });
+            doc.text('Thank you for applying to Arabian Talent League!', 105, 280, { align: 'center' });
 
-            doc.save(`SGT_Receipt_${app.paymentId}.pdf`);
+            doc.save(`ATL_Receipt_${app.paymentId}.pdf`);
             showNotification('success', 'Receipt downloaded!');
         }
 
@@ -3759,28 +3828,38 @@ function safeString(value) {
                 return showNotification('warning', 'No applications!');
             }
 
-            const headers = ['ID', 'Name', 'Email', 'Mobile', 'Age', 'Category', 'Talent', 'Files', 'Payment', 'Status', 'Date'];
+            const headers = ['ID', 'Name', 'Email', 'Mobile', 'Age', 'Age Category', 'Talent Category', 'Files', 'Payment', 'Status', 'Date'];
             const rows = sessionData.applications.map(a => [
-                a.id, a.name || a.userName, a.email || a.userEmail, a.mobile,
-                a.age, a.talentCategory, `"${(a.talent || '').slice(0, 100).replace(/"/g, '""')}"`,
-                (a.driveUrls || []).length, a.paymentAmount, a.status, a.submittedAt
+                a.id, 
+                a.name || a.userName, 
+                a.email || a.userEmail, 
+                a.mobile,
+                a.age, 
+                a.ageCategory,
+                a.talentCategory, 
+                `"${(a.talent || '').slice(0, 100).replace(/"/g, '""')}"`,
+                (a.driveUrls || []).length, 
+                a.paymentAmount, 
+                a.status, 
+                a.submittedAt
             ]);
 
             const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
             const blob = new Blob([csv], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `SGT_Export_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `ATL_Export_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
 
             showNotification('success', 'Exported!');
         }
 
-        console.log('🚀 Singhulars Got Talent - GODSPEED v3.1');
+        function closeFileViewer() {
+            document.getElementById('fileViewerModal')?.classList.remove('active');
+        }
+
+        console.log('🚀 Arabian Talent League - GODSPEED v3.1');
         console.log('📋 API:', GOOGLE_SHEETS_URL);
     </script>
-    </body>
+</body>
 </html>
-
-
-
