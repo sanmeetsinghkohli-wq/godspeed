@@ -2334,7 +2334,7 @@
         const EMAILJS_SERVICE_ID = 'service_gjyxfni';
         const TEMPLATE_APPROVED = 'template_79rj8l7';
         const TEMPLATE_REJECTED = 'template_5z2riwt';
-        const STRIPE_PUBLISHABLE_KEY = 'pk_test_51QOz2oCvpkJKWzh6fvb6ZfJdKUjB9J6OEYY0HAbLQHqFcGo4KhNz2DeMvzEA6bqMXEFHlcjXO2NiGi2TFmBGjZd400Q2Oq7ZC8';
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SaeBxJhxK58hO0hzxF2su6tmvNWLdqf0EZMTHVMly4BjXLybQeokHHq142ZJO1YFytZwvAPLCSOCH3ViQorta0C00I6PJI6EP';
         const REGISTRATION_FEE_AED = 55;
         const CURRENCY = 'AED';
         
@@ -2457,7 +2457,8 @@
         // ==================== INITIALIZATION ====================
         window.onload = function() {
             console.log('🚀 Initializing Arabian Talent League...');
-            
+                handlePaymentReturn();
+
             // Initialize Google Sign-In
             if (typeof google !== 'undefined' && google.accounts) {
                 google.accounts.id.initialize({
@@ -3072,157 +3073,225 @@
             showNotification('success', 'Logged out!');
         }
                 // ==================== PAYMENT ====================
-        async function processStripePayment() {
-            const btn = document.getElementById('submitBtn');
-            const originalText = btn?.innerHTML;
-            
-            try {
-                if (btn) {
-                    btn.innerHTML = '💳 Processing Payment...';
-                    btn.disabled = true;
-                }
-
-                if (!confirm(`💳 Payment: AED ${REGISTRATION_FEE_AED}\n\nClick OK to proceed`)) {
-                    throw new Error('Payment cancelled');
-                }
-                
-                await new Promise(r => setTimeout(r, 2000));
-                return 'pi_' + Math.random().toString(36).substr(2, 24);
-            } catch (error) {
-                if (btn) {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-                throw error;
-            }
+        // ==================== STRIPE PAYMENT (PAYMENT LINK) ====================
+async function processStripePayment() {
+    const btn = document.getElementById('submitBtn');
+    const originalText = btn?.innerHTML;
+    
+    try {
+        if (btn) {
+            btn.innerHTML = '⏳ Preparing payment...';
+            btn.disabled = true;
         }
 
-        // ==================== FORM SUBMISSION ====================
-        async function handleFormSubmit(e) {
-            e.preventDefault();
+        // Collect all form data including files
+        const fileInput = document.getElementById('fileUpload');
+        const files = fileInput.files;
+        const fileNames = [];
+        const fileTypes = [];
+        const fileDataArray = [];
 
-            if (!currentUser) {
-                showNotification('error', 'Please login first!');
-                return;
+        // Process files to base64
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].size > 50 * 1024 * 1024) {
+                throw new Error(`File too large: ${files[i].name}`);
             }
+            fileNames.push(files[i].name);
+            fileTypes.push(files[i].type);
+            
+            const base64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(files[i]);
+            });
+            fileDataArray.push(base64);
+        }
 
-            const ageData = calculateAge();
-            if (!ageData) {
-                showNotification('error', 'Please enter valid date of birth!');
-                return;
-            }
+        // Get age data
+        const ageData = calculateAge();
 
-            const countryCode = document.getElementById('countryCode')?.value;
-            const talentCategory = document.getElementById('talentCategory')?.value;
-            const mobile = document.getElementById('mobile')?.value;
-            const talentDescription = document.getElementById('talentDescription')?.value;
+        // Prepare complete form data
+        const formData = {
+            id: Date.now(),
+            userEmail: currentUser.email,
+            userName: currentUser.name,
+            userPhoto: currentUser.photoURL || null,
+            name: document.getElementById('fullName')?.value,
+            email: document.getElementById('email')?.value,
+            countryCode: document.getElementById('countryCode')?.value,
+            mobile: document.getElementById('countryCode')?.value + document.getElementById('mobile')?.value,
+            dob: document.getElementById('dateOfBirth')?.value,
+            age: ageData?.age,
+            ageCategory: ageData?.category,
+            talentCategory: document.getElementById('talentCategory')?.value,
+            talentSubCategory: document.getElementById('talentSubCategory')?.value || '',
+            talent: document.getElementById('talentDescription')?.value,
+            performanceLink: document.getElementById('performanceLink')?.value || '',
+            files: files.length,
+            fileNames: fileNames,
+            fileTypes: fileTypes,
+            fileData: fileDataArray,
+            status: 'Pending',
+            paymentAmount: REGISTRATION_FEE_AED,
+            paymentCurrency: CURRENCY,
+            createdAt: new Date().toISOString()
+        };
 
-            if (!countryCode || !talentCategory || !mobile || mobile.length < 7) {
-                showNotification('error', 'Please fill all required fields!');
-                return;
-            }
+        // Store in localStorage (survives page redirect)
+        localStorage.setItem('ATL_pendingRegistration', JSON.stringify(formData));
+        
+        if (btn) {
+            btn.innerHTML = '💳 Redirecting to Stripe...';
+        }
 
-            if (!talentDescription || talentDescription.length < 50) {
-                showNotification('error', 'Describe your talent (min 50 chars)!');
-                return;
-            }
+        // Small delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-            const fileInput = document.getElementById('fileUpload');
-            if (!fileInput?.files.length) {
-                showNotification('error', 'Please upload at least one file!');
-                return;
-            }
+        // Redirect to Stripe payment link
+        window.location.href = 'https://buy.stripe.com/test_6oU28s4qtdsBa0dcPx3gk00';
 
-            const btn = document.getElementById('submitBtn');
-            const originalText = btn?.innerHTML;
-
+    } catch (error) {
+        console.error('Payment preparation error:', error);
+        showNotification('error', 'Failed to prepare payment: ' + error.message);
+        
+        if (btn) {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+}
+// ==================== HANDLE PAYMENT RETURN ====================
+async function handlePaymentReturn() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('payment') === 'success') {
+        // Show loading state
+        showNotification('info', '⏳ Completing your registration...');
+        
+        // Retrieve stored form data
+        const pendingDataStr = localStorage.getItem('ATL_pendingRegistration');
+        
+        if (pendingDataStr) {
             try {
-                const paymentId = await processStripePayment();
+                const formData = JSON.parse(pendingDataStr);
                 
-                if (btn) btn.innerHTML = '⏳ Processing files...';
-
-                const files = fileInput.files;
-                const filePromises = [];
-                const fileNames = [];
-                const fileTypes = [];
-
-                for (let i = 0; i < files.length; i++) {
-                    if (files[i].size > 50 * 1024 * 1024) {
-                        throw new Error(`File too large: ${files[i].name}`);
-                    }
-                    fileNames.push(files[i].name);
-                    fileTypes.push(files[i].type);
-                    filePromises.push(new Promise(resolve => {
-                        const reader = new FileReader();
-                        reader.onload = e => resolve(e.target.result);
-                        reader.readAsDataURL(files[i]);
-                    }));
-                }
-
-                const fileDataArray = await Promise.all(filePromises);
+                // Add payment details
+                formData.paymentId = 'stripe_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                formData.paymentStatus = 'Paid';
+                formData.submittedAt = new Date().toLocaleString();
                 
-                if (btn) btn.innerHTML = '⏳ Uploading to Drive...';
-
-                const formData = {
-                    id: Date.now(),
-                    odId: currentUser.id,
-                    userEmail: currentUser.email,
-                    userName: currentUser.name,
-                    userPhoto: currentUser.photoURL || null,
-                    name: document.getElementById('fullName')?.value,
-                    email: document.getElementById('email')?.value,
-                    countryCode,
-                    mobile: countryCode + mobile,
-                    dob: document.getElementById('dateOfBirth')?.value,
-                    age: ageData.age,
-                    ageCategory: ageData.category,
-                    talentCategory,
-                    talentSubCategory: document.getElementById('talentSubCategory')?.value || '',
-                    talent: talentDescription,
-                    performanceLink: document.getElementById('performanceLink')?.value || '',
-                    files: files.length,
-                    fileNames,
-                    fileTypes,
-                    fileData: fileDataArray,
-                    status: 'Pending',
-                    paymentId,
-                    paymentAmount: REGISTRATION_FEE_AED,
-                    paymentCurrency: CURRENCY,
-                    paymentStatus: 'Paid',
-                    submittedAt: new Date().toLocaleString()
-                };
-
+                // Save to Google Sheets
                 const result = await saveToGoogleSheets(formData);
                 
-                // Store without base64
-                const appToStore = { ...formData };
-                delete appToStore.fileData;
-                appToStore.driveUrls = result.driveUrls || [];
-                appToStore.folderUrl = result.folderUrl || '';
+                if (result.success !== false) {
+                    // Success! Store for receipt
+                    const appToStore = { ...formData };
+                    delete appToStore.fileData; // Remove base64 data
+                    appToStore.driveUrls = result.driveUrls || [];
+                    appToStore.folderUrl = result.folderUrl || '';
+                    
+                    sessionData.applications.push(appToStore);
+                    pendingApplication = appToStore;
+                    
+                    if (currentUser) {
+                        currentUser.hasApplied = true;
+                    }
+                    
+                    // Clear stored data
+                    localStorage.removeItem('ATL_pendingRegistration');
+                    
+                    // Update success modal
+                    document.getElementById('successPaymentId').textContent = formData.paymentId;
+                    document.getElementById('successEmail').textContent = formData.email;
+                    document.getElementById('successCategory').textContent = formData.talentCategory;
+                    
+                    // Show success modal
+                    document.getElementById('successModal')?.classList.add('active');
+                    
+                    showNotification('success', '🎉 Registration completed successfully!');
+                    
+                    // Hide application form if visible
+                    hideApplicationForm();
+                    
+                    // Clean URL
+                    window.history.replaceState({}, document.title, '/');
+                } else {
+                    throw new Error('Failed to save registration');
+                }
                 
-                sessionData.applications.push(appToStore);
-                pendingApplication = appToStore;
-                currentUser.hasApplied = true;
-
-                if (btn) {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-
-                document.getElementById('successPaymentId').textContent = paymentId;
-                document.getElementById('successEmail').textContent = formData.email;
-                document.getElementById('successCategory').textContent = talentCategory;
-                document.getElementById('successModal')?.classList.add('active');
-
             } catch (error) {
-                console.error('Submission error:', error);
-                showNotification('error', error.message || 'Submission failed');
-                if (btn) {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
+                console.error('Registration completion error:', error);
+                showNotification('error', 'Registration failed. Please contact support with your payment confirmation.');
             }
+        } else {
+            showNotification('warning', 'Session expired. If you paid, please contact support.');
+            window.history.replaceState({}, document.title, '/');
         }
+    } else if (urlParams.get('payment') === 'cancelled') {
+        showNotification('warning', 'Payment was cancelled. Your form data has been saved.');
+        window.history.replaceState({}, document.title, '/');
+        
+        // Restore form if user wants to try again
+        const pendingDataStr = localStorage.getItem('ATL_pendingRegistration');
+        if (pendingDataStr) {
+            showNotification('info', 'Click "Apply Now" to try again with your saved data.');
+        }
+    }
+}
+        // ==================== FORM SUBMISSION ====================
+        // ==================== FORM SUBMISSION ====================
+async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    if (!currentUser) {
+        showNotification('error', 'Please login first!');
+        return;
+    }
+
+    const ageData = calculateAge();
+    if (!ageData) {
+        showNotification('error', 'Please enter valid date of birth!');
+        return;
+    }
+
+    const countryCode = document.getElementById('countryCode')?.value;
+    const talentCategory = document.getElementById('talentCategory')?.value;
+    const mobile = document.getElementById('mobile')?.value;
+    const talentDescription = document.getElementById('talentDescription')?.value;
+
+    if (!countryCode || !talentCategory || !mobile || mobile.length < 7) {
+        showNotification('error', 'Please fill all required fields!');
+        return;
+    }
+
+    if (!talentDescription || talentDescription.length < 50) {
+        showNotification('error', 'Describe your talent (min 50 chars)!');
+        return;
+    }
+
+    const fileInput = document.getElementById('fileUpload');
+    if (!fileInput?.files.length) {
+        showNotification('error', 'Please upload at least one file!');
+        return;
+    }
+
+    // Check file sizes
+    for (let i = 0; i < fileInput.files.length; i++) {
+        if (fileInput.files[i].size > 50 * 1024 * 1024) {
+            showNotification('error', `File too large: ${fileInput.files[i].name} (max 50MB)`);
+            return;
+        }
+    }
+
+    try {
+        // Process payment (will redirect to Stripe)
+        await processStripePayment();
+        
+    } catch (error) {
+        console.error('Submission error:', error);
+        showNotification('error', error.message || 'Submission failed');
+    }
+}
 
         function closeSuccessModal() {
             document.getElementById('successModal')?.classList.remove('active');
